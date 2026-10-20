@@ -953,7 +953,7 @@
 
     /* ---- Sanity CMS hookup ----
        Paste the Project ID from the Sanity studio below. Leave it empty to use the PROJECTS_DATA above as-is.
-       If Sanity is slow/unreachable the site uses the last good copy (browser cache), then PROJECTS_DATA above. */
+       Only published Sanity content is shown. Empty or failed responses never restore unpublished projects. */
     const SANITY = { projectId: 'xyfvm619', dataset: 'production' };
     const __khBoot = (fn) => {
       const run = () => { let d = false; const go = () => { if (d) return; d = true; fn(); }; (window.__khWorks || Promise.resolve()).then(go, go); };
@@ -961,7 +961,7 @@
     };
     (() => {
       if (!SANITY.projectId) return;
-      const KEY = 'kh_works_v1';
+      // Only currently published projects are shown; never restore unpublished content from local storage.
       const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
       const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":slug.current,title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
       const img = (u, w) => (u && u.indexOf('/images/') > -1 && !/\.gif(\?|$)/i.test(u)) ? u + '?w=' + w + '&auto=format' : u;
@@ -984,12 +984,12 @@
       const map = (p) => ({ id: p.id, title: p.title, category: p.category || '', year: p.year || '', client: p.client, role: p.role, location: p.location,
         services: p.services || [], overview: p.overview, aspectRatio: p.aspectRatio || '3 / 4', coverImage: img(p.coverImage, 1400) || '', slides: [],
         blocks: (p.blocks || []).map(blk).filter(Boolean) });
-      const apply = (l) => { if (Array.isArray(l) && l.length) PROJECTS_DATA.splice(0, PROJECTS_DATA.length, ...l); };
-      const cached = () => { try { apply(JSON.parse(localStorage.getItem(KEY))); } catch (_) {} };
-      const url = 'https://' + SANITY.projectId + '.apicdn.sanity.io/v2025-01-01/data/query/' + SANITY.dataset + '?query=' + encodeURIComponent(Q);
-      const live = fetch(url).then((r) => r.json()).then((j) => { const l = (j.result || []).filter((p) => p && p.id && p.title).map(map); try { localStorage.setItem(KEY, JSON.stringify(l)); } catch (_) {} return l; });
-      const guard = new Promise((res) => setTimeout(() => res(null), 1800));
-      window.__khWorks = Promise.race([live, guard]).then((l) => { if (l && l.length) apply(l); else cached(); }).catch(cached);
+      const apply = (l) => { if (Array.isArray(l)) PROJECTS_DATA.splice(0, PROJECTS_DATA.length, ...l); };
+      apply([]); const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 10000);
+      const url = 'https://' + SANITY.projectId + '.api.sanity.io/v2025-01-01/data/query/' + SANITY.dataset + '?perspective=published&query=' + encodeURIComponent(Q);
+      const live = fetch(url, {cache: 'no-store', signal: controller.signal}).then((r) => { if (!r.ok) throw new Error('Projects unavailable'); return r.json(); }).then((j) => { if (!Array.isArray(j.result)) throw new Error('Invalid projects response'); return j.result.filter((p) => p && p.id && p.title).map(map); });
+      // An empty published result is authoritative, including after unpublishing every project.
+      window.__khWorks = live.then(apply).catch(() => apply([])).finally(() => clearTimeout(timeout));
     })();
     const FEEDBACK_DATA = [
   {
@@ -1137,7 +1137,7 @@
           return `<article class="work-card" data-project-id="${project.id}" style="--card-aspect: ${project.aspectRatio}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
         }).join('');
       }
-      const workCards = Array.from(document.querySelectorAll('.work-card'));
+      if (workIndex) workIndex.textContent = `${PROJECTS_DATA.length ? '01' : '00'} / ${String(PROJECTS_DATA.length).padStart(2, '0')}`; const workCards = Array.from(document.querySelectorAll('.work-card'));
 
       
       /* ---- case study renderer ----
