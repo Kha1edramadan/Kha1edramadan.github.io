@@ -25,7 +25,7 @@
       
       --card-bg: #141413;
       --placeholder-border: rgba(242, 242, 239, 0.18);
-      --overlay-bg: rgba(10, 10, 10, 0.95);
+      --overlay-bg: #0a0a0a;
       
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-serif: 'Instrument Serif', Georgia, serif;
@@ -40,9 +40,9 @@
       --text-color: #0a0a0a;
       --muted-color: rgba(10, 10, 10, 0.45);
       --border-color: rgba(10, 10, 10, 0.15);
-      --card-bg: #e8e8e4;
+      --card-bg: #f2f2ef;
       --placeholder-border: rgba(10, 10, 10, 0.12);
-      --overlay-bg: rgba(242, 242, 239, 0.96);
+      --overlay-bg: #f2f2ef;
     }
 
     /* ==========================================================================
@@ -627,7 +627,7 @@
     .cs-quote{margin:0;padding:clamp(2rem,6vw,5rem) 0;text-align:center}
     .cs-quote p{margin:0 auto;max-width:900px;font-size:clamp(1.4rem,3vw,2.8rem);line-height:1.2;font-weight:500;letter-spacing:-.02em;text-wrap:balance}
     .cs-quote cite{display:block;margin-top:1.25rem;font-style:normal;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-color)}
-    .cs-pal{display:flex;border:1px solid var(--placeholder-border);overflow:hidden}
+    .cs-pal{display:flex;border:1px solid var(--placeholder-border);overflow:hidden;border-radius:var(--cs-r,14px)}
     .cs-sw{flex:1;min-height:clamp(120px,18vw,220px);display:flex;flex-direction:column;justify-content:flex-end;padding:.9rem;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;mix-blend-mode:normal}
     .cs-sw span{mix-blend-mode:difference;color:#fff}
     .cs-soon{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--card-bg);border:1px solid var(--placeholder-border);color:var(--muted-color);font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
@@ -739,7 +739,7 @@
     .gallery-container{height:100svh}
     .work-card{width:clamp(300px,35vw,720px);height:100svh}
     .work-card+.work-card{border-left:1px solid var(--border-color)}
-    .work-cover{height:100%;aspect-ratio:auto}
+    .work-cover{height:100%;aspect-ratio:auto}.work-card,.work-cover{border-radius:var(--cs-r,14px)}
     .section-label{position:absolute;left:0;right:0;bottom:0;z-index:6;border:0;padding:1.15rem var(--side-padding);mix-blend-mode:difference;color:#fff;pointer-events:none}
     .huge-voices-wrap{min-height:100svh}
     @media(max-width:768px){.work-card{width:78vw}}
@@ -790,7 +790,7 @@
     .dialog-content,dialog{scrollbar-width:none;-ms-overflow-style:none}
     .dialog-content::-webkit-scrollbar,dialog::-webkit-scrollbar{display:none;width:0;height:0}
     .project-dialog-header{position:relative;--cs-p:0}
-    .project-dialog-header::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--text-color);transform-origin:left;transform:scaleX(var(--cs-p));pointer-events:none}
+    /* Case-study progress bar removed. */
     .cs-foot{display:grid;grid-template-columns:1fr auto;align-items:end;gap:2rem;padding:clamp(1.5rem,3vw,2.5rem) 0 clamp(1.5rem,3vw,2.5rem)}
     .cs-foot button{padding:0}
     .cs-back{justify-self:start;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
@@ -802,7 +802,7 @@
 
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;800&family=Anton&display=swap" rel="stylesheet">
-</head>
+<style>.ht-answer.ar,.ht-answer.ar *,.ht-field.ar,.ht-status.ar,.ask-chips button.ar,[lang="ar"],[dir="rtl"]{font-family:"Cairo",sans-serif}#project-dialog .project-dialog-header{position:relative;align-items:flex-start;gap:24px;padding-bottom:24px;margin-bottom:24px}#project-dialog #project-slides-container{height:100%;width:100%;padding-top:0}#close-project-dialog{display:flex;align-items:center;justify-content:center;gap:10px;min-width:94px;min-height:44px;flex-shrink:0;padding:10px 14px;border:1px solid var(--border-color);border-radius:99px;background:var(--bg-color);opacity:1;font-size:.7rem;font-weight:600;letter-spacing:.08em;transition:background .2s,color .2s}#close-project-dialog:hover{background:var(--text-color);color:var(--bg-color)}#close-project-dialog:focus-visible,.cs-foot button:focus-visible{outline:2px solid currentColor;outline-offset:4px}#close-project-dialog:focus:not(:focus-visible){outline:none}#project-dialog .cs-foot{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:clamp(14px,1.5vw,28px);padding:28px 0;margin-top:40px}#project-dialog .cs-foot button{display:flex;flex-direction:column;gap:12px;min-height:110px;padding:12px 0;opacity:1!important;transform:none;text-align:left;align-items:flex-start;justify-self:stretch}#project-dialog .cs-foot button[hidden]{display:none!important}#project-dialog .cs-foot .cs-next{text-align:right;align-items:flex-end}#project-dialog .cs-foot .cs-nl{font-size:.68rem;letter-spacing:.1em;opacity:.6}#project-dialog .cs-foot .cs-nt{font-size:clamp(1.25rem,2.5vw,2.6rem);font-weight:600;line-height:1.15;letter-spacing:-.025em;overflow-wrap:anywhere}#project-dialog .cs-foot button:hover .cs-nt{text-decoration:underline;text-underline-offset:.2em}@media(max-width:560px){#project-dialog .cs-foot{grid-template-columns:1fr}#project-dialog .cs-foot .cs-back{order:0}#project-dialog .cs-foot .cs-next{text-align:left;align-items:flex-start}#project-dialog .dialog-title{font-size:clamp(1.25rem,5vw,2rem)}}html[data-theme="light"] #feedback,html[data-theme="light"] #contact,html[data-theme="light"] .premium-whatsapp-btn:hover{box-shadow:none}html[data-theme="light"] .fb-strip,html[data-theme="light"] .fb-strip.is-active,html[data-theme="light"] .ask-box,html[data-theme="light"] .st-wh{background:var(--bg-color)}</style></head>
 <body>
   <script>(function(h){if(matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('story-off')}else{h.classList.add('st-wait','st-intro');setTimeout(function(){h.classList.remove('st-wait')},6000)}})(document.documentElement)</script>
 
@@ -924,7 +924,7 @@
           <h2 id="project-dialog-title" class="dialog-title">Project Title</h2>
           <span id="project-dialog-category" class="dialog-meta">Category • 2026</span>
         </div>
-        <button id="close-project-dialog" class="close-btn" aria-label="Close project modal">Close ✕</button>
+        <button id="close-project-dialog" class="close-btn" aria-label="Close project modal"><span>Close</span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
       <div class="dialog-content" id="project-slides-container"></div>
     </div>
@@ -954,7 +954,7 @@
     /* ---- Sanity CMS hookup ----
        Paste the Project ID from the Sanity studio below. Leave it empty to use the PROJECTS_DATA above as-is.
        Only published Sanity content is shown. Empty or failed responses never restore unpublished projects. */
-    const SANITY = { projectId: 'xyfvm619', dataset: 'production' };
+    const SANITY = { projectId: 'xyfvm619', dataset: 'production' }; const __khEsc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); const __khUrl = v => { try { const u = new URL(String(v || ''), location.href); return v && (u.protocol === 'https:' || u.origin === location.origin) ? u.href : ''; } catch (_) { return ''; } }; const __khEmbed = v => { const s = __khUrl(v); try { const u = new URL(s); return ((['www.youtube.com','www.youtube-nocookie.com'].includes(u.hostname) && u.pathname.startsWith('/embed/')) || (u.hostname === 'player.vimeo.com' && u.pathname.startsWith('/video/')) || (['www.figma.com','embed.figma.com'].includes(u.hostname) && (u.pathname.startsWith('/embed') || u.hostname === 'embed.figma.com'))) ? s : ''; } catch (_) { return ''; } };
     const __khBoot = (fn) => {
       const run = () => { let d = false; const go = () => { if (d) return; d = true; fn(); }; (window.__khWorks || Promise.resolve()).then(go, go); };
       document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', run) : run();
@@ -963,7 +963,7 @@
       if (!SANITY.projectId) return;
       // Only currently published projects are shown; never restore unpublished content from local storage.
       const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
-      const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":slug.current,title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
+      const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
       const img = (u, w) => (u && u.indexOf('/images/') > -1 && !/\.gif(\?|$)/i.test(u)) ? u + '?w=' + w + '&auto=format' : u;
       const embedUrl = (u) => { u = String(u || ''); let m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/); if (m) return 'https://www.youtube.com/embed/' + m[1]; m = u.match(/vimeo\.com\/(\d+)/); return m ? 'https://player.vimeo.com/video/' + m[1] : u; };
       const mi = (x) => x && x.src ? { src: img(x.src, 2000), caption: x.caption || '', focus: x.focus || '' } : null;
@@ -982,12 +982,12 @@
         }
       };
       const map = (p) => ({ id: p.id, title: p.title, category: p.category || '', year: p.year || '', client: p.client, role: p.role, location: p.location,
-        services: p.services || [], overview: p.overview, aspectRatio: p.aspectRatio || '3 / 4', coverImage: img(p.coverImage, 1400) || '', slides: [],
+        services: p.services || [], overview: p.overview, aspectRatio: ['3 / 4','4 / 5','1 / 1','4 / 3'].includes(p.aspectRatio) ? p.aspectRatio : '3 / 4', coverImage: __khUrl(img(p.coverImage, 1400)) || '', slides: [],
         blocks: (p.blocks || []).map(blk).filter(Boolean) });
       const apply = (l) => { if (Array.isArray(l)) PROJECTS_DATA.splice(0, PROJECTS_DATA.length, ...l); };
       apply([]); const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 10000);
       const url = 'https://' + SANITY.projectId + '.api.sanity.io/v2025-01-01/data/query/' + SANITY.dataset + '?perspective=published&query=' + encodeURIComponent(Q);
-      const live = fetch(url, {cache: 'no-store', signal: controller.signal}).then((r) => { if (!r.ok) throw new Error('Projects unavailable'); return r.json(); }).then((j) => { if (!Array.isArray(j.result)) throw new Error('Invalid projects response'); return j.result.filter((p) => p && p.id && p.title).map(map); });
+      const live = fetch(url, {cache: 'no-store', signal: controller.signal}).then((r) => { if (!r.ok) throw new Error('Projects unavailable'); return r.json(); }).then((j) => { if (!Array.isArray(j.result)) throw new Error('Invalid projects response'); return j.result.filter((p) => p && p.id && p.title && __khUrl(p.coverImage)).map(map); });
       // An empty published result is authoritative, including after unpublishing every project.
       window.__khWorks = live.then(apply).catch(() => apply([])).finally(() => clearTimeout(timeout));
     })();
@@ -1133,8 +1133,8 @@
 
       if(galleryContainer) {
         galleryContainer.innerHTML = PROJECTS_DATA.map((project) => {
-          const coverHtml = project.coverImage ? `<img src="${project.coverImage}" alt="" loading="lazy">` : `<div class="work-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
-          return `<article class="work-card" data-project-id="${project.id}" style="--card-aspect: ${project.aspectRatio}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
+          const coverHtml = project.coverImage ? `<img src="${__khEsc(project.coverImage)}" alt="${__khEsc(project.title)}" loading="lazy">` : `<div class="work-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
+          return `<article class="work-card" data-project-id="${__khEsc(project.id)}" style="--card-aspect: ${__khEsc(project.aspectRatio)}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
         }).join('');
       }
       if (workIndex) workIndex.textContent = `${PROJECTS_DATA.length ? '01' : '00'} / ${String(PROJECTS_DATA.length).padStart(2, '0')}`; const workCards = Array.from(document.querySelectorAll('.work-card'));
@@ -1153,7 +1153,7 @@
       const csIsVid = (s) => /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(String(s || ''));
       const csM = (x, fit) => {
         const o = (typeof x === 'string') ? { src: x } : (x || {});
-        const fp = o.focus ? ` style="--fp:${csEsc(o.focus)}"` : '';
+        if (!__khUrl(o.src)) return ''; o.src = __khUrl(o.src); const fp = /^\d+(?:\.\d+)?% \d+(?:\.\d+)?%$/.test(o.focus || '') ? ` style="--fp:${csEsc(o.focus)}"` : ''; if (o.ratio && !['16/9','21/9','4/3','1/1','4/5'].includes(o.ratio)) o.ratio = '16/9';
         const media = csIsVid(o.src)
           ? `<video src="${csEsc(o.src)}"${o.poster ? ` poster="${csEsc(o.poster)}"` : ''} muted loop playsinline autoplay preload="metadata"></video>`
           : `<img src="${csEsc(o.src)}" alt="${csEsc(o.alt || o.caption || '')}" loading="lazy">`;
@@ -1167,12 +1167,12 @@
           case 'video': return csM(b, !!b.ratio);
           case 'pair': case 'grid': case 'split': { const im = b.images || []; const n = b.type === 'pair' ? 2 : Math.min(4, Math.max(2, im.length)); return `<div class="cs-row c${n}">${im.map((x) => csM(x, true)).join('')}</div>`; }
           case 'bento': { const im = (b.images || []).slice(0, 3); return `<div class="cs-bento${b.flip ? ' flip' : ''}">${im.map((x) => csM(x, false)).join('')}</div>`; }
-          case 'embed': return `<figure class="cs-fig cs-embed"><span class="cs-m"><iframe src="${csEsc(b.src)}" loading="lazy" allowfullscreen title="${csEsc(b.caption || 'Embed')}"></iframe></span>${b.caption ? `<figcaption class="cs-cap">${csEsc(b.caption)}</figcaption>` : ''}</figure>`;
-          case 'download': return `<a class="cs-dl" href="${csEsc(b.src)}" download target="_blank" rel="noopener"><span>${csEsc(b.label || 'Download')}</span><small>${csEsc(b.note || '')}</small></a>`;
+          case 'embed': return __khEmbed(b.src) ? `<figure class="cs-fig cs-embed"><span class="cs-m"><iframe src="${csEsc(__khEmbed(b.src))}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="${csEsc(b.caption || 'Embed')}"></iframe></span>${b.caption ? `<figcaption class="cs-cap">${csEsc(b.caption)}</figcaption>` : ''}</figure>` : '';
+          case 'download': return __khUrl(b.src) ? `<a class="cs-dl" href="${csEsc(__khUrl(b.src))}" download target="_blank" rel="noopener noreferrer"><span>${csEsc(b.label || 'Download')}</span><small>${csEsc(b.note || '')}</small></a>` : '';
           case 'spacer': return '<div class="cs-sp"></div>';
           case 'text': return `<div class="cs-text"><div>${b.label ? `<p class="cs-lbl">${csEsc(b.label)}</p>` : ''}${b.heading ? `<h3 dir="auto">${csEsc(b.heading)}</h3>` : ''}</div><p dir="auto">${csEsc(b.body)}</p></div>`;
           case 'quote': return `<blockquote class="cs-quote"><p dir="auto">${csEsc(b.text)}</p>${b.by ? `<cite>${csEsc(b.by)}</cite>` : ''}</blockquote>`;
-          case 'palette': return `<div class="cs-pal">${(b.colors || []).map((c) => { const hex = c.hex || c; return `<div class="cs-sw" style="background:${csEsc(hex)}"><span>${csEsc(c.name || hex)}</span></div>`; }).join('')}</div>`;
+          case 'palette': return ''; /* Palette presentation is temporarily disabled; uploaded artwork remains unchanged. */
           default: return '';
         }
       };
@@ -1185,14 +1185,14 @@
         const meta = [['Client', p.client || p.title], ['Services', services.join(', ')], ['Role', p.role || 'Brand Strategist & Designer'], ['Year', p.year], p.location ? ['Location', p.location] : null].filter(Boolean);
         const blocks = (p.blocks && p.blocks.length ? p.blocks : (p.slides || []).map((src) => ({ type: 'image', src })));
         const body = blocks.length ? blocks.map(csBlock).join('') : '<div class="cs-soon">Case study coming soon</div>';
-        document.getElementById('project-slides-container').innerHTML =
+        const header = document.querySelector('.project-dialog-header'); header.remove(); document.getElementById('project-slides-container').innerHTML =
           `<div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` +
           `<div class="cs-blocks">${body}</div>` +
-          `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close">Back to work</button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt.id)}"><span class="cs-nl">Next case</span><span class="cs-nt">${csEsc(nxt.title)}</span></button></div>`;
-        document.getElementById('project-slides-container').scrollTop = 0; document.querySelector('.project-dialog-header').style.setProperty('--cs-p', 0);
+          `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">← All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt.id)}"><span class="cs-nl">Next project →</span><span class="cs-nt">${csEsc(nxt.title)}</span></button></div>`;
+        const content = document.getElementById('project-slides-container'); content.prepend(header); content.scrollTop = 0; const nextButton = content.querySelector('.cs-next'); if (nextButton) nextButton.hidden = PROJECTS_DATA.length < 2;
       };
       (() => { const c = document.getElementById('project-slides-container'), h = c.parentElement.querySelector('.project-dialog-header');
-        c.addEventListener('scroll', () => { const m = c.scrollHeight - c.clientHeight; h.style.setProperty('--cs-p', m > 0 ? (c.scrollTop / m).toFixed(4) : 0); }, { passive: true }); })();
+        /* The case-study header scrolls with its presentation; no progress overlay. */ })();
       document.getElementById('project-slides-container').addEventListener('click', (e) => {
         const t = e.target.closest('[data-cs]'); if (!t) return;
         if (t.dataset.cs === 'close') document.getElementById('project-dialog').close(); else { try { SoundEngine.click(); } catch (_) {} csOpen(t.dataset.id); }
@@ -1216,7 +1216,7 @@
         updateThemeLabel();
         themeBtn.addEventListener('click', () => {
           const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-          root.setAttribute('data-theme', next); localStorage.setItem('kr-portfolio-theme', next); updateThemeLabel(); SoundEngine.theme(next === 'light');
+          root.setAttribute('data-theme', next); try { localStorage.setItem('kr-portfolio-theme', next); } catch (_) {} updateThemeLabel(); SoundEngine.theme(next === 'light');
         });
       }
 
@@ -1518,7 +1518,7 @@
   </script>
 
   <script>
-  addEventListener('load',function(){
+  addEventListener('load',function(){ __khBoot(function(){
     (function(){var h=document.documentElement,u=function(){h.classList.toggle('hero-view',scrollY<innerHeight*((window.KStory?KStory.k():0)+.4))};addEventListener('scroll',u,{passive:true});addEventListener('resize',u);u()})();
     var tf=document.getElementById('ct-time');
     if(tf){var up=function(){try{tf.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Africa/Cairo',hour:'2-digit',minute:'2-digit'})}catch(e){}};up();setInterval(up,30000)}
@@ -1526,14 +1526,14 @@
     gsap.registerPlugin(ScrollTrigger);
     if(window.KStory)KStory.mount();
     var sc=function(t,s,e){return{trigger:t,start:s,end:e,scrub:true}};
-    gsap.to('#work',{scale:.94,opacity:.3,ease:'none',transformOrigin:'50% 100%',scrollTrigger:sc('#feedback','top bottom','top top')});
+    gsap.to('#work',{scale:.94,ease:'none',transformOrigin:'50% 100%',scrollTrigger:sc('#feedback','top bottom','top top')});
     (function(){
       document.querySelectorAll('.hv > span').forEach(function(sp){var t=sp.textContent;sp.textContent='';sp.setAttribute('aria-label',t);t.split('').forEach(function(c){var l=document.createElement('span');l.className='hv-l';l.setAttribute('aria-hidden','true');l.textContent=c;sp.appendChild(l)})});
       var tl=gsap.timeline({defaults:{ease:'power3.out'},scrollTrigger:{trigger:'.huge-voices-wrap',start:'top 92%',end:'top 30%',scrub:.6}});
       tl.fromTo('.hv:nth-child(1) .hv-l',{yPercent:112},{yPercent:0,duration:1,stagger:{each:.09,from:'start'}},0)
         .fromTo('.hv:nth-child(2) .hv-l',{yPercent:112},{yPercent:0,duration:1,stagger:{each:.09,from:'end'}},0);
     })();
-    gsap.to('#feedback',{scale:.95,opacity:.35,ease:'none',transformOrigin:'50% 100%',scrollTrigger:sc('#contact','top bottom','top 30%')});
+    gsap.to('#feedback',{scale:.95,ease:'none',transformOrigin:'50% 100%',scrollTrigger:sc('#contact','top bottom','top 30%')});
     gsap.fromTo('#contact',{clipPath:'inset(9% 5% 0% 5% round 34px 34px 0px 0px)'},{clipPath:'inset(0% 0% 0% 0% round 0px 0px 0px 0px)',ease:'none',scrollTrigger:sc('#contact','top bottom','top 10%')});
     gsap.timeline({scrollTrigger:{trigger:'#contact',start:'top 55%',once:true}})
       .from('.ct-w > span',{yPercent:115,duration:1.1,stagger:.12,ease:'power4.out'})
@@ -1548,7 +1548,7 @@
     ScrollTrigger.create({trigger:'#contact',start:'top 70%',once:true,onEnter:function(){KS.whoosh()}});
     var ly=scrollY,lt=performance.now(),WK=document.getElementById('work');
     addEventListener('scroll',function(){var n=performance.now(),dy=scrollY-ly,dt=Math.max(8,n-lt);ly=scrollY;lt=n;if(!WK)return;var r=WK.getBoundingClientRect();if(r.top<innerHeight*.9&&r.bottom>innerHeight*.1)KS.slide(dy/dt*1000)},{passive:true});
-    ScrollTrigger.refresh();
+    ScrollTrigger.refresh(); });
   });
   </script>
 
