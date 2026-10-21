@@ -5745,7 +5745,8 @@ window.KS = function () {
       let intent = ['who','correction','greet','thanks','price','time','terms','availability','contact','feedback'].find(k => ids.includes(k));
       if (ids.includes('price') && ids.includes('time')) intent = 'priceTime';
       const forcedIds = ['work','service','overview','details'];
-      if (!intent && forcedIds.includes(forced?.id)) intent = forced.id;
+      if (forcedIds.includes(forced?.id)) intent = forced.id;
+      else if (direct.length === 1 && norm(direct[0].title) === q) intent = 'project';
       if (!intent && (direct.length || selected && follow)) intent = 'project';
       if (!intent && ids.includes('other')) intent = 'other';
       if (!intent && (ids.includes('work') || ranked.length)) intent = 'work';
