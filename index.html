@@ -3368,40 +3368,6 @@ dialog::backdrop {
   .fb-quote.ar { line-height: 1.75; }
 }
 .fb-quote { overflow-wrap: break-word; }
-
-/* Work dimensions follow the available viewport, including browser zoom. */
-html,body { max-width:100%; overflow-x:clip; }
-#work.work-section { --work-header:56px; --gallery-height:calc(100svh - var(--nav-height) - var(--work-header)); height:100svh; padding-top:var(--nav-height); }
-#work .section-label { position:relative; flex:0 0 var(--work-header); height:var(--work-header); bottom:auto; padding:0 var(--side-padding); color:var(--text-color); mix-blend-mode:normal; }
-#work .gallery-container { flex:1 1 auto; min-height:0; height:var(--gallery-height); }
-#work .work-card { height:var(--gallery-height); width:calc(var(--gallery-height) * var(--card-ratio,.75)); min-width:160px; max-width:none; }
-#work .work-cover { height:100%; }
-.work-card:focus-visible { outline:2px solid var(--text-color);outline-offset:-4px; }
-.work-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; width:100%; padding:4rem var(--side-padding); text-align:center; }
-.work-empty p { color:var(--muted-color); }
-.work-empty a { border-bottom:1px solid currentColor; padding:.6rem 0; }
-#work.is-empty { height:auto; min-height:55svh; }
-#work.is-empty .gallery-container { height:auto; min-height:35svh; }
-#project-dialog .cs-foot { grid-template-columns:repeat(3,minmax(0,1fr)); }
-#project-dialog .cs-all { text-align:center; align-items:center; }
-@media(max-width:768px) {
-  #work.work-section { height:auto; padding-top:calc(var(--nav-height) + .5rem); padding-bottom:2rem; gap:1rem; }
-  #work .section-label { flex-basis:auto; height:auto; min-height:36px; }
-  #work .gallery-container { flex:none; height:auto; padding:0 var(--side-padding); gap:12px; scroll-padding-inline:var(--side-padding); }
-  #work .work-card { width:min(82vw,440px); height:auto; aspect-ratio:var(--card-aspect,3/4); border-radius:10px; }
-  #work .work-cover { flex:1; min-height:0; }
-  .huge-voices-wrap { min-height:0; padding-top:4rem; padding-bottom:2rem; }
-  .feedback-inner { padding-top:0; }
-  .ct-main { gap:2.5rem; }
-  .ht-in { gap:.25rem; }
-  .ht-field { min-width:0; font-size:16px; }
-  .chat-options-menu { max-width:calc(100vw - 2*var(--side-padding)); }
-}
-@media(max-width:560px) {
-  #project-dialog .cs-foot { grid-template-columns:1fr; gap:.5rem; }
-  #project-dialog .cs-foot button { min-height:80px; }
-  #project-dialog .cs-all { text-align:left; align-items:flex-start; order:2; }
-}
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;800&family=Anton&display=swap" rel="stylesheet">
 </head>
@@ -3927,26 +3893,11 @@ __khBoot(() => {
     }));
     galleryContainer.innerHTML = workItems.map(project => {
       const coverHtml = project.coverImage ? `<img src="${__khEsc(project.coverImage)}" alt="${__khEsc(project.title)}" loading="lazy" style="object-position:${__khEsc(project.coverFocus || '50% 50%')}">` : `<div class="work-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
-      const ratio = String(project.aspectRatio || '3 / 4').split('/').map(Number);
-      return `<article class="work-card" role="button" tabindex="0" aria-label="${project.title ? 'View ' + __khEsc(project.title) : 'Open case study layout'}" data-project-id="${__khEsc(project.id)}" style="--card-aspect: ${__khEsc(project.aspectRatio)}; --card-ratio:${ratio[0]/ratio[1] || .75}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
+      return `<article class="work-card" data-project-id="${__khEsc(project.id)}" style="--card-aspect: ${__khEsc(project.aspectRatio)}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
     }).join('');
-
   }
   if (workIndex) workIndex.textContent = `${PROJECTS_DATA.length ? '01' : '00'} / ${String(PROJECTS_DATA.length).padStart(2, '0')}`;
   const workCards = Array.from(document.querySelectorAll('.work-card'));
-  galleryContainer.addEventListener('keydown', event => {
-    const card = event.target.closest('.work-card');
-    if (card && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); card.click(); }
-  });
-  let workScrollFrame=0;
-  galleryContainer.addEventListener('scroll',()=>{
-    if (workScrollFrame || !workCards.length || galleryContainer.classList.contains('gsap-work-track')) return;
-    workScrollFrame=requestAnimationFrame(()=>{workScrollFrame=0;
-      const left=galleryContainer.getBoundingClientRect().left;let nearest=0,distance=Infinity;
-      workCards.forEach((card,i)=>{const d=Math.abs(card.getBoundingClientRect().left-left);if(d<distance){distance=d;nearest=i;}});
-      if(workIndex)workIndex.textContent=String(nearest+1).padStart(2,'0')+' / '+String(workCards.length).padStart(2,'0');
-    });
-  },{passive:true});
 
   /* ---- case study renderer ----
      Project fields (all optional except id/title): client, role, location, services:[], overview,
@@ -4055,17 +4006,14 @@ __khBoot(() => {
     const body = blocks.map(csBlock).join('');
     const header = document.querySelector('.project-dialog-header');
     header.remove();
-    document.getElementById('project-slides-container').innerHTML = `<div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-all" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
+    document.getElementById('project-slides-container').innerHTML = `<div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
     const content = document.getElementById('project-slides-container');
     content.prepend(header);
     if (!meta.length && !p.overview) content.querySelector('.cs-intro')?.remove();
     content.scrollTop = 0;
-    document.getElementById('project-dialog').scrollTop=0;
-    document.querySelector('.project-dialog-inner').scrollTop=0;
     const nextButton = content.querySelector('.cs-next');
     if (nextButton) nextButton.hidden = !nxt;
     const backButton = content.querySelector('.cs-back');
-    if (backButton) backButton.hidden = !prev;
     if (prev && backButton) {
       backButton.dataset.cs = 'previous';
       backButton.dataset.id = prev.id;
@@ -4169,9 +4117,9 @@ __khBoot(() => {
     gsap.registerPlugin(ScrollTrigger);
     gsap.matchMedia().add('(min-width: 769px)', () => {
       if (!galleryContainer || !workCards.length) return;
-      const getDist = () => Math.max(0, galleryContainer.scrollWidth - galleryContainer.parentElement.clientWidth);
+      galleryContainer.classList.add('gsap-work-track');
+      const getDist = () => Math.max(0, galleryContainer.scrollWidth - window.innerWidth);
       if (getDist() > 0) {
-        galleryContainer.classList.add('gsap-work-track');
         document.documentElement.classList.add('stack');
         gsap.to(galleryContainer, {
           x: () => -getDist(),
@@ -4195,7 +4143,7 @@ __khBoot(() => {
           invalidateOnRefresh: true
         });
       }
-      return () => { document.documentElement.classList.remove('stack'); galleryContainer.classList.remove('gsap-work-track'); };
+      return () => document.documentElement.classList.remove('stack');
     });
     gsap.to('.huge-voices-text', {
       opacity: 0,
@@ -5278,8 +5226,7 @@ addEventListener('load', function () {
       };
     };
     gsap.to('#work', {
-      scale: () => matchMedia('(max-width:768px)').matches ? 1 : .94,
-      invalidateOnRefresh: true,
+      scale: .94,
       ease: 'none',
       transformOrigin: '50% 100%',
       scrollTrigger: sc('#feedback', 'top bottom', 'top top')
@@ -5329,8 +5276,7 @@ addEventListener('load', function () {
       }, 0);
     })();
     gsap.to('#feedback', {
-      scale: () => matchMedia('(max-width:768px)').matches ? 1 : .95,
-      invalidateOnRefresh: true,
+      scale: .95,
       ease: 'none',
       transformOrigin: '50% 100%',
       scrollTrigger: sc('#contact', 'top bottom', 'top 30%')
