@@ -3112,9 +3112,7 @@ body {
 .st-wh,.st-xw::after,.st-cue i {
   background: #f2f2ef;
 }
-.ct-title i {
-  color: var(--text-color);
-}
+
 .f-av i {
   background: currentColor;
   animation: none;
@@ -3162,50 +3160,6 @@ dialog::backdrop {
   .site-nav .nav-link,.site-nav .theme-toggle {
     font-size: .62rem;
     letter-spacing: .025em;
-  }
-}
-.ct-title .talk-signal {
-  display: inline-flex;
-  width: .13em;
-  height: .13em;
-  min-width: 10px;
-  min-height: 10px;
-  margin-left: .02em;
-  vertical-align: baseline;
-  color: currentColor;
-  line-height: 0;
-  letter-spacing: 0;
-}
-.talk-signal svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  overflow: visible;
-}
-.talk-signal path {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.ct-title:hover .talk-signal path {
-  animation: talk-voice 1.2s ease-in-out infinite;
-}
-.ct-title:hover .talk-signal path:nth-child(2) {
-  animation-delay: .15s;
-}
-.ct-title:hover .talk-signal path:nth-child(3) {
-  animation-delay: .3s;
-}
-@keyframes talk-voice {
-  0%,100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(.6);
-  }
-}
-@media (prefers-reduced-motion:reduce) {
-  .ct-title:hover .talk-signal path {
-    animation: none;
   }
 }
 </style>
@@ -3296,7 +3250,7 @@ dialog::backdrop {
     <!-- CONTACT SECTION (القسم المُعدّل بـ Layout وهيراكركي سليم بدون سهم أو نقطة) -->
     <section id="contact" class="contact-section">
       <div class="ct-top"><span class="ct-k">Cairo <span id="ct-time">--:--</span></span></div>
-      <h2 class="ct-title"><span class="ct-w"><span>LET'S TALK<i class="talk-signal" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 10v4"/><path d="M12 5v14"/><path d="M18 8v8"/></svg></i></span></span></h2>
+      <h2 class="ct-title"><span class="ct-w"><span>LET'S TALK<i aria-hidden="true">.</i></span></span></h2>
       <div class="ct-main">
         <div class="ask"><span class="ct-k">Ask first</span>
           <div class="ht-root" id="mo-root" data-phase="idle">
