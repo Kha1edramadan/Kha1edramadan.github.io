@@ -3252,11 +3252,11 @@ dialog::backdrop {
       <div class="ct-top"><span class="ct-k">Cairo <span id="ct-time">--:--</span></span></div>
       <h2 class="ct-title"><span class="ct-w"><span>LET'S TALK<i aria-hidden="true">.</i></span></span></h2>
       <div class="ct-main">
-        <div class="ask"><span class="ct-k">Ask first</span>
+        <div class="ask"><span class="ct-k">Khaled’s Assistant</span>
           <div class="ht-root" id="mo-root" data-phase="idle">
             <canvas class="ht-orb" id="ht-orb" aria-hidden="true"></canvas>
             <form class="ht-in" id="ask-form" autocomplete="off">
-                  <input class="ht-field" id="ask-in" dir="auto" maxlength="160" enterkeyhint="send" autocapitalize="sentences" spellcheck="false" placeholder="Pricing, timeline, process..." aria-label="Ask a question">
+                  <input class="ht-field" id="ask-in" dir="auto" maxlength="1500" enterkeyhint="send" autocapitalize="sentences" spellcheck="false" placeholder="Pricing, timeline, process..." aria-label="Ask a question">
                   <span class="ask-wave" id="ask-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
                   <span class="ask-slot"><button type="button" id="ask-mic" aria-label="Voice input"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><rect x="5" y="1" width="4" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.75 6.5V7a4.25 4.25 0 0 0 8.5 0v-.5M7 11.25V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button type="submit" id="ask-send" aria-label="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button></span>
             </form>
@@ -5598,166 +5598,55 @@ window.KS = function () {
   /* Portfolio assistant: site information, published projects and its existing presentation. */
 
   (function () {
-  'use strict';
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const norm = value => String(value ?? '').normalize('NFKC').toLowerCase().replace(/[\u064b-\u065f\u0670\u0640]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[^a-z0-9\u0621-\u064a]+/g, ' ').trim();
-  const groups = [
-    ['identity','identities','branding','brand','هويه','هويات','براند'],
-    ['packaging','package','تغليف','عبوات'],
-    ['logo','logos','شعار','شعارات','لوجو'],
-    ['restaurant','restaurants','مطعم','مطاعم'],
-    ['coffee','cafe','مقهي','قهوه'],
-    ['fashion','clothing','ازياء','ملابس']
-  ].map(group => group.map(norm));
-  const stop = new Set(norm('show me the a an of for about tell please projects project work works portfolio design designed find search looking any do you have can i see would like some خالد رمضان مشروع مشاريع اعمال الاعمال عن من في علي هل اريد اعرض لي تفاصيل تصميم منشوره عندك لديك ابحث بحث اشوف شوف وريني ممكن').split(' '));
-  function tokens(value) {
-    return norm(value).split(' ').map(word => {
-      if (/^[\u0621-\u064a]/.test(word)) word = word.replace(/^(?:وال|بال|لل|ال)/, '');
-      const group = groups.findIndex(g => g.includes(word));
-      return group < 0 ? word : 'topic' + group;
-    }).filter(word => word && !stop.has(word));
-  }
-  function near(a, b) {
-    if (a === b) return true;
-    if (a.startsWith('topic') || b.startsWith('topic')) return false;
-    if (a.length < 5 || Math.abs(a.length - b.length) > 1) return false;
-    let i = 0, j = 0, errors = 0;
-    while (i < a.length && j < b.length) {
-      if (a[i] === b[j]) { i++; j++; continue; }
-      if (++errors > 1) return false;
-      if (a.length >= b.length) i++;
-      if (b.length >= a.length) j++;
+    'use strict';
+    const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function create() {
+      const state = {L:'en',turn:0,selected:null}, history = [];
+      let cooldown = 0;
+      const projects = () => typeof PROJECTS_DATA === 'undefined' ? [] : PROJECTS_DATA;
+      const initialChips = lang => (lang === 'ar' ? ['الأعمال المنشورة','الخدمات'] : ['Published projects','Services']).map(t=>({t}));
+      function render(reply, ar, links = [], selected = []) {
+        const confirmed = new Set(Array.from(document.querySelectorAll('#contact a[href]'),a=>a.href));
+        const names = {whatsapp:'WhatsApp',email:ar?'الإيميل':'Email',behance:'Behance',instagram:'Instagram',linkedin:'LinkedIn',pinterest:'Pinterest',youtube:'YouTube',facebook:'Facebook'};
+        const anchors = links.filter(l=>confirmed.has(l.href) && names[l.key]).map(l=>'<a class="ask-act" href="'+escape(l.href)+'" target="_blank" rel="noopener noreferrer">'+escape(names[l.key])+'</a>');
+        selected.forEach(p => { if (projects().some(x=>x.id===p.id)) anchors.push('<a class="ask-act" href="#work" data-assistant-project="'+escape(p.id)+'">'+escape(p.title)+'</a>'); });
+        return escape(reply).replace(/\n/g,'<br>') + (anchors.length?'<br>'+anchors.join(' '):'');
+      }
+      async function respond(raw, forced) {
+        const q = String(raw ?? '').trim().slice(0,1500);
+        const ar = /[\u0600-\u06ff]/.test(q) || !/[a-z]/i.test(q) && state.L === 'ar';
+        state.L = ar?'ar':'en'; state.turn++;
+        if (forced?.projectId && projects().some(p=>p.id===forced.projectId)) state.selected = forced.projectId;
+        const failure = text => ({ar,html:render(text,ar),acts:{},chips:[{t:ar?'حاول تاني':'Try again',f:{retry:q,projectId:state.selected}}]});
+        if (Date.now()<cooldown) return failure(ar?'وصلنا لحد الاستخدام المؤقت. جرّب كمان دقيقة.':'The temporary usage limit has been reached. Try again in a minute.');
+        const controller = new AbortController(), timer = setTimeout(()=>controller.abort(),32000);
+        try {
+          await (window.__khWorks || Promise.resolve());
+          const response = await fetch('https://ai-bot.aeaeaeessaee.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',signal:controller.signal,body:JSON.stringify({message:q,history:history.slice(-8),selectedProjectId:state.selected})});
+          if (response.status===429) { cooldown = Date.now()+Math.min(300,Math.max(10,Number(response.headers.get('Retry-After'))||60))*1000; return failure(ar?'المساعد وصل لحد الاستخدام المؤقت. جرّب كمان دقيقة.':'The assistant has reached a temporary usage limit. Please try again in a minute.'); }
+          if (!response.ok) throw new Error('unavailable');
+          const data = await response.json();
+          if (typeof data.reply!=='string' || !data.reply.trim()) throw new Error('empty');
+          history.push({role:'user',content:q},{role:'assistant',content:data.reply.slice(0,1800)});
+          if (history.length>8) history.splice(0,history.length-8);
+          const selected = Array.isArray(data.projects)?data.projects:[];
+          const suggestions = (Array.isArray(data.suggestions)?data.suggestions:[]).filter(t=>typeof t==='string').slice(0,2).map(t=>({t}));
+          selected.slice(0,2).forEach(p=>{if(projects().some(x=>x.id===p.id)) suggestions.push({t:ar?'تفاصيل '+p.title:'About '+p.title,f:{projectId:p.id}});});
+          return {ar,html:render(data.reply,ar,Array.isArray(data.links)?data.links:[],selected),acts:{},chips:suggestions.slice(0,3)};
+        } catch (error) {
+          return failure(ar?(error.name==='AbortError'?'الرد اتأخر شوية. جرّب تاني.':'مش قادر أوصل للمساعد دلوقتي. جرّب تاني بعد شوية.'):(error.name==='AbortError'?'The reply took too long. Please try again.':'The assistant is temporarily unavailable. Please try again shortly.'));
+        } finally { clearTimeout(timer); }
+      }
+      return {respond,state,initialChips,recLang:()=>state.L==='ar'?'ar-EG':'en-US'};
     }
-    return errors + (i < a.length || j < b.length ? 1 : 0) <= 1;
-  }
-  const patterns = {
-    price: /سعر|اسعار|تكلف|بكام|فلوس|ميزاني|تسعير|خصم|دولار|جنيه|ريال|باقات|\b(prices?|pricing|pricng|costs?|quote|budget|discount|usd|packages?)\b|how much/,
-    time: /مده|وقت|ميعاد|موعد|تسليم|امتي|كم يوم|كم يستغرق|\b(timeline|timeframe|turnaround|deadline|duration|days?|weeks?|delivery)\b|how long|when.*(start|finish)/,
-    terms: /تعديل|جولات|مراجعات|ملفات|مفتوح|صيغ|استلم|هستلم|الدفع|عربون|اقساط|حقوق|ملكيه|استرداد|خطوات|طريقه العمل|\b(revisions?|rounds?|files?|formats?|deliverables?|payment|deposit|refund|rights|copyright|process|steps)\b|\bhow\b.*\b(work|start)\b/,
-    other: /مواقع|(?:تصميم|تصمم|تطوير|بناء) موقع|موقع الكتروني|تطبيق|برمجه|سوشيال|اداره حسابات|اعلانات|مونتاج|\b(websites?|ui|ux|apps?|development|social media|advertising|editing)\b/,
-    work: /اعمال|مشاريع|مشروع|بروجيكت|نماذج|بورتفوليو|شغلك|الشغل|\b(work|works|projects?|portfolio|cases?|examples?)\b/,
-    service: /خدمات|خدمه|تصمم|تصميم|مصمم|شعار|شعارات|لوجو|هويه|هويات|براند|تغليف|تايبوجرافي|طيبوجرافي|خطوط|\b(services?|design|designer|branding|brand|identity|logo|logos|packaging|typography)\b|what do you do|who is khaled|about khaled/,
-    who: /انت مين|من انت|هل انت خالد|انت بوت|ذكاء اصطناعي|\b(bot|ai|automated)\b|who are you|are you khaled/,
-    about: /من هو خالد|عن خالد|\bwho is khaled\b|\babout khaled\b/,
-    contact: /تواصل|واتساب|ايميل|بريد|رقم|اكلم|اتصل|\b(contact|whatsapp|email|phone|reach)\b/,
-    availability: /متاح|متفرغ|\b(available|availability|booking)\b|taking.*projects/,
-    feedback: /اراء|تقييم|تجارب العملاء|\b(reviews?|testimonials?|feedback)\b|client voices/,
-    thanks: /^(شكرا|شكرا لك|تسلم|thanks|thank you|cheers)$/,
-    greet: /^(مرحبا|اهلا|السلام عليكم|صباح الخير|مساء الخير|hi|hello|hey|good morning|good evening)$/,
-    correction: /لم افهم|مش فاهم|لم تجب|ليس هذا|مش قصدي|ردك غلط|لم تفهم|dont understand|did not answer|not what i|you misunderstood/
-  };
-  const answers = {
-    price: ['The cost depends on what your project needs and the scope of the work. A standalone logo and a complete visual identity involve different amounts of work, so the quote is tailored to the project. There are no specific rates published on this website.', 'تختلف تكلفة كل مشروع بحسب احتياجاته ونطاق العمل المطلوب. فتصميم شعار يختلف عن تطوير هوية بصرية كاملة، ولذلك يُحدَّد عرض السعر لكل مشروع على حدة. لا يعرض الموقع أسعارًا محددة.'],
-    time: ['There is no published delivery schedule. I cannot promise a completion date or estimate the duration from the information available.', 'لا توجد مدة تنفيذ معلنة على الموقع. لا أستطيع تحديد موعد تسليم أو تقدير مدة المشروع من المعلومات المتاحة.'],
-    priceTime: ['The cost depends on your project’s requirements and scope, so the quote is tailored to the work involved. There are no specific prices or delivery times published here; I cannot give you a reliable figure or date.', 'تختلف التكلفة بحسب احتياجات المشروع ونطاق العمل المطلوب، ولذلك يُحدَّد عرض السعر لكل مشروع على حدة. لا يعرض الموقع أسعارًا أو مدد تنفيذ محددة، فلا أستطيع تأكيد مبلغ أو موعد تسليم.'],
-    terms: ['The website does not specify the working process, payment terms, revision limits or delivery files. I cannot present any of these as an agreed part of the service.', 'لا يحدد الموقع خطوات العمل أو شروط الدفع أو عدد التعديلات أو ملفات التسليم. لا أستطيع اعتبار أيٍّ منها جزءًا متفقًا عليه من الخدمة.'],
-    about: ['Khaled Ramadan is a brand designer.', 'خالد رمضان مصمم براند.'],
-    service: ['Khaled offers brand identity, logo design and packaging design. The scope of each project is tailored to its needs.', 'يقدم خالد تصميم الهوية البصرية والشعارات والتغليف، ويُحدَّد نطاق كل مشروع بحسب احتياجاته.'],
-    other: ['I do not have confirmed information about whether Khaled offers that service.', 'لا تتوفر لدي معلومات مؤكدة عن تقديم خالد لهذه الخدمة.'],
-    who: ['I am the portfolio’s automated assistant. I search the information published here and keep track of the project we are discussing. I do not have access to private conversations or unpublished work.', 'أنا المساعد الآلي للموقع. أبحث في المعلومات المنشورة وأتابع سياق المشروع الذي نتحدث عنه. لا أطلع على المحادثات الخاصة أو الأعمال غير المنشورة.'],
-    contact: ['The Contact section contains Khaled’s WhatsApp and email links. The “Start a Conversation” button below is the direct route to contact him.', 'تجد روابط واتساب والبريد الإلكتروني في قسم التواصل. زر «Start a Conversation» الموجود أسفل المساعد يتيح لك التواصل مباشرةً.'],
-    availability: ['The website currently displays “Available to Work”. It does not publish a booking calendar or a confirmed start date.', 'يعرض الموقع عبارة «متاح للعمل»، لكنه لا يعرض جدول حجوزات أو موعدًا مؤكدًا لبدء مشروع جديد.'],
-    greet: ['Hello. You can ask about Khaled’s services, search published projects by name or type, or ask about a specific project.', 'مرحبًا. يمكنك السؤال عن خدمات خالد، أو البحث عن مشروع باسمه أو نوعه، أو الاستفسار عن تفاصيل مشروع منشور.'],
-    thanks: ['You’re welcome.', 'على الرحب والسعة.'],
-    unknown: ['I could not find a supported answer to that question. I can explain the listed services or search the published projects by name and type.', 'لم أجد معلومات منشورة تجيب عن هذا السؤال. يمكنني توضيح الخدمات المذكورة أو البحث في المشاريع المنشورة بالاسم والنوع.'],
-    correction: ['Which part should I clarify: the services, a project, or the information that is not published?', 'ما الجزء الذي تريد توضيحه: الخدمات، أم أحد المشاريع، أم المعلومات غير المنشورة؟']
-  };
-  function create() {
-    const state = { L: 'en', turn: 0, last: null, selected: null, results: [] };
-    const getData = () => typeof PROJECTS_DATA === 'undefined' ? [] : PROJECTS_DATA.filter(p => p && p.id && p.title);
-    const chip = (ar, en, arabic, id, projectId) => ({t: ar ? arabic : en, f: {id, projectId}});
-    function choices(ar, all, selected) {
-      if (selected) return [chip(ar, 'Project overview', 'نبذة المشروع', 'overview', selected.id), chip(ar, 'Project details', 'تفاصيل المشروع', 'details', selected.id)];
-      return [chip(ar, 'Published projects', 'الأعمال المنشورة', 'work'), chip(ar, 'Services', 'الخدمات', 'service')];
-    }
-    function respond(raw, forced) {
-      const text = String(raw ?? '').slice(0, 1500), q = norm(text);
-      const ar = /[\u0600-\u06ff]/.test(text) || !/[a-z]/i.test(text) && state.L === 'ar';
-      state.L = ar ? 'ar' : 'en'; state.turn++;
-      const all = getData(), live = new Map(all.map(p => [p.id, p]));
-      state.results = state.results.filter(id => live.has(id));
-      if (!live.has(state.selected)) state.selected = null;
-      const ids = Object.keys(patterns).filter(key => patterns[key].test(q));
-      const direct = all.filter(p => norm(p.title).length > 2 && q.includes(norm(p.title)));
-      const search = tokens(q);
-      const ranked = all.map(p => {
-        const fields = [[p.title, 6], [p.category, 4], [(p.services || []).join(' '), 4], [p.overview, 1], [p.year, 3]];
-        return {p, score: search.reduce((sum, term) => sum + Math.max(0, ...fields.map(([value, weight]) => tokens(value).some(word => near(term, word)) ? weight : 0)), 0), hits: search.filter(term => fields.some(([value]) => tokens(value).some(word => near(term, word)))).length};
-      }).filter(r => r.hits > 0 && r.hits >= Math.ceil(search.length * .6)).sort((a,b) => b.score - a.score);
-      const ordinal = /\b(first|second|third|fourth|last)\b|الاول|الثاني|التاني|الثالث|الرابع|الاخير/.exec(q);
-      if (ordinal && state.results.length) {
-        const n = /second|الثاني|التاني/.test(ordinal[0]) ? 1 : /third|الثالث/.test(ordinal[0]) ? 2 : /fourth|الرابع/.test(ordinal[0]) ? 3 : /last|الاخير/.test(ordinal[0]) ? state.results.length - 1 : 0;
-        state.selected = state.results[n] || null;
-      }
-      if (direct.length === 1) state.selected = direct[0].id;
-      if (forced?.projectId && live.has(forced.projectId)) state.selected = forced.projectId;
-      let selected = live.get(state.selected);
-      const follow = /\b(this|that|it|its|overview|details|client|year|role|next|previous)\b|هذا|ده|عنه|نبذه|تفاصيل|عميل|سنه|عام|دور|التالي|السابق/.test(q) || !!ordinal;
-      if (selected && /^(next|previous|التالي|السابق)( project| مشروع)?$/.test(q)) {
-        const at = all.findIndex(p => p.id === selected.id) + (/previous|السابق/.test(q) ? -1 : 1);
-        if (all[at]) { selected = all[at]; state.selected = selected.id; }
-        else return result(ar ? 'لا يوجد مشروع منشور آخر في هذا الاتجاه.' : 'There is no further published project in that direction.', 'project', [], selected);
-      }
-      let intent = ['who','about','correction','greet','thanks','price','time','terms','availability','contact','feedback'].find(k => ids.includes(k));
-      if (ids.includes('price') && ids.includes('time')) intent = 'priceTime';
-      const forcedIds = ['work','service','overview','details'];
-      if (forcedIds.includes(forced?.id)) intent = forced.id;
-      else if (direct.length === 1 && norm(direct[0].title) === q) intent = 'project';
-      if (!intent && (direct.length || selected && follow)) intent = 'project';
-      if (!intent && ids.includes('other')) intent = 'other';
-      const searching = /\b(show|find|search|looking|projects?|portfolio|cases?|examples?)\b|اعمال|مشاريع|مشروع|اعرض|وريني|ابحث/.test(q);
-      if (!intent && ids.includes('service') && !searching) intent = 'service';
-      if (!intent && (ids.includes('work') || ranked.length)) intent = 'work';
-      if (!intent) intent = ids.includes('service') ? 'service' : 'unknown';
-      let answer, sources = [], found = [];
-      if (intent === 'feedback') {
-        const reviews = typeof FEEDBACK_DATA === 'undefined' ? [] : FEEDBACK_DATA.filter(review => review && review.quote);
-        answer = reviews.length ? (ar ? 'يعرض قسم Client Voices آراء العملاء المنشورة على الموقع. يمكنك قراءة تجاربهم هناك.' : 'Client Voices contains the customer reviews published on this website. You can read their experiences there.') : (ar ? 'لا توجد آراء عملاء متاحة للمساعد حاليًا.' : 'No client reviews are currently available to the assistant.');
-        const reply = result(answer, intent, [], null);
-        if (reviews.length) reply.acts.fb = {href:'#feedback',label:ar?'آراء العملاء':'Read client reviews'};
-        return reply;
-      } else if (['project','overview','details'].includes(intent)) {
-        if (!selected && ranked.length === 1) { selected = ranked[0].p; state.selected = selected.id; }
-        if (!selected) answer = ar ? 'اختر مشروعًا منشورًا أولًا لعرض تفاصيله.' : 'Choose a published project first to see its details.';
-        else {
-          sources = [selected.id];
-          const details = intent === 'details' || /\b(details|client|year|role|services)\b|تفاصيل|عميل|سنه|عام|دور|خدمات/.test(q);
-          const fields = [[ar?'العميل':'Client', selected.client], [ar?'الخدمات':'Services', (selected.services || []).join(', ')], [ar?'الدور':'Role', selected.role], [ar?'السنة':'Year', selected.year]];
-          answer = selected.title + '\n' + (details ? fields.filter(([,v]) => v).map(([k,v]) => k + ': ' + v).join('\n') || (ar?'لا توجد تفاصيل إضافية منشورة لهذا المشروع.':'No additional details are published for this project.') : selected.overview || (ar?'لا توجد نبذة منشورة لهذا المشروع.':'No overview is published for this project.'));
-        }
-      } else if (intent === 'work') {
-        const general = forced?.id === 'work' || /^(show me (the )?(work|projects|portfolio)|published projects|all projects|الاعمال المنشوره|اعرض الاعمال|كل المشاريع)$/.test(q);
-        found = general || search.length === 0 ? all : ranked.map(r => r.p);
-        state.results = found.map(p => p.id); state.selected = null; selected = null;
-        sources = state.results;
-        answer = !all.length ? (ar?'لا توجد مشاريع منشورة حاليًا. بطاقات العرض التجريبية ليست مشاريع منشورة.':'There are no published projects at the moment. The display templates are not published projects.') : !found.length ? (ar?'لم أجد مشروعًا منشورًا يطابق هذا الوصف. يمكنك البحث باسم المشروع أو بنوع العمل.':'I found no published project matching that description. Try a project name or type of work.') : (ar?'المشاريع المطابقة':'Matching projects') + ' (' + found.length + '):\n' + found.slice(0, 8).map((p,i) => (i+1) + '. ' + p.title).join('\n') + (found.length > 8 ? (ar?'\nتظهر بقية المشاريع في قسم الأعمال.':'\nThe remaining projects are in Work.') : '') + (ar?'\nيمكنك السؤال عن مشروع باسمه أو برقم ترتيبه.':'\nAsk about a project by name or position in this list.');
-      } else {
-        answer = (answers[intent] || answers.unknown)[ar ? 1 : 0];
-        if (intent === 'service') {
-          const requested = [
-            [/تغليف|عبوات|\bpackaging\b/, 'التغليف', 'packaging'],
-            [/شعار|شعارات|لوجو|\blogos?\b/, 'الشعارات', 'logos'],
-            [/هويه|هويات|\bidentity\b/, 'الهويات البصرية', 'visual identities']
-          ].filter(([pattern]) => pattern.test(q));
-          const general = /who is khaled|about khaled|من هو خالد/.test(q);
-          if (!general && requested.length) answer = ar ? 'نعم، يصمم خالد ' + requested.map(([,label]) => label).join(' و') + '.' : 'Yes, Khaled designs ' + requested.map(([, ,label]) => label).join(' and ') + '.';
-          else if (!general && /تايبوجرافي|طيبوجرافي|خطوط|\btypography\b/.test(q)) answer = ar ? 'نعم، يعمل على اختيار الخطوط وتنسيقها ضمن تصميم البراند.' : 'Yes, he works with typography as part of brand design.';
-        }
-        if (intent === 'price' && ids.includes('other')) answer = ar ? 'الموقع يذكر الهوية البصرية والتغليف ضمن مجالات عمل خالد، ولا يؤكد توفر الخدمة التي تسأل عنها أو سعرًا لها. عمومًا، تختلف تكلفة التصميم بحسب احتياجات المشروع ونطاقه.' : 'The website lists visual identity and packaging as Khaled’s areas of work. It does not confirm the service you asked about or a rate for it. In general, design costs depend on a project’s requirements and scope.';
-        if (state.last === intent && intent === 'price') answer = ar ? 'المعيار هو نطاق العمل: ما الذي يحتاجه المشروع، وما الذي يشمله التصميم المطلوب. من دون تحديد ذلك، لن يكون أي رقم تقديرًا دقيقًا. لا تتوفر لدي أسعار محددة أو حد أدنى معلن.' : 'The key is the scope: what the project needs and what the design work includes. Without that, a figure would not be a reliable estimate. I do not have published rates or a minimum fee to quote.';
-        if (state.last === intent && ['time','terms'].includes(intent)) answer = ar ? 'لا تتوفر تفاصيل إضافية عن هذه النقطة في الموقع. لا أستطيع تقديم تقدير أو شروط غير منشورة.' : 'There are no further details on that point here. I cannot supply an estimate or terms that have not been published.';
-      }
-      return result(answer, intent, sources, selected, found);
-      function result(answer, intent, sources, selected, found = []) {
-        state.last = intent;
-        const chips = found.length ? found.slice(0, 2).map(p => chip(ar, p.title, p.title, 'overview', p.id)) : choices(ar, all, selected);
-        return {html: esc(answer).replace(/\n/g, '<br>'), ar, ints:[intent], sources, acts:{work:sources.length ? {href:'#work', label:ar?'عرض الأعمال':'View work'} : null}, chips};
-      }
-    }
-    return {respond, state, initialChips:lang => choices(lang === 'ar', getData()), recLang:() => state.L === 'ar' ? 'ar-EG' : 'en-US'};
-  }
-  window.SourcePortfolioAssistant = {create};
-})();
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest && e.target.closest('[data-assistant-project]');
+      if (!link) return;
+      const card = Array.from(document.querySelectorAll('.work-card[data-project-id]')).find(c=>c.dataset.projectId===link.dataset.assistantProject);
+      if (card) { e.preventDefault(); card.click(); }
+    });
+    window.SourcePortfolioAssistant = {create};
+  })();
 
 
   var f = document.getElementById('ask-form');
@@ -5931,7 +5820,7 @@ window.KS = function () {
       b.textContent = c.t;
       if (ar) b.className = 'ar';
       b.addEventListener('click', function () {
-        ask(c.t, c.f);
+        ask(c.f && c.f.retry ? c.f.retry : c.t, c.f);
       });
       chips.appendChild(b);
     });
@@ -5957,11 +5846,11 @@ window.KS = function () {
     moRoot.style.setProperty('--chipY', y + 'px');
     moRoot.style.setProperty('--stageH', Math.max(400, y + chH + 44) + 'px');
   }
-  async function think(R) {
+  async function think(pending, ar) {
     inp.blur();
     f.setAttribute('inert', '');
     setPhase('thinking');
-    moStatus.className = 'ht-status' + (R.ar ? ' ar' : '');
+    moStatus.className = 'ht-status' + (ar ? ' ar' : '');
     var i = 0;
     setLabel(cp.labels[0]);
     var iv = setInterval(function () {
@@ -5969,8 +5858,13 @@ window.KS = function () {
       setLabel(cp.labels[i]);
     }, 560);
     tween('spd', 3.2, 900);
-    await sleep(MIN_THINK);
-    clearInterval(iv);
+    var R;
+    try {
+      var results = await Promise.all([pending, sleep(MIN_THINK)]);
+      R = results[0];
+    } finally { clearInterval(iv); }
+    lastR = R;
+    cp = R.ar ? CP_AR : CP_EN;
     setLabel(cp.done);
     await tween('dis', 1, 450);
     moAns.className = 'ht-answer' + (R.ar ? ' ar' : '');
@@ -6036,31 +5930,20 @@ window.KS = function () {
     moving = false;
   }
   function begin(q, forced) {
-    var R;
-    try {
-      R = E.respond(q, forced);
-    } catch (err) {
-      R = {
-        html: '…',
-        ar: AR.test(q),
-        acts: {},
-        chips: E.initialChips()
-      };
-    }
-    lastR = R;
-    cp = R.ar ? CP_AR : CP_EN;
+    var ar = AR.test(q) || !/[a-z]/i.test(q) && E.state.L === 'ar';
+    cp = ar ? CP_AR : CP_EN;
+    var assistantLabel = document.querySelector('.ask > .ct-k');
+    if (assistantLabel) assistantLabel.textContent = ar ? 'مساعد خالد' : 'Khaled’s Assistant';
     inp.value = q;
     sync();
     moving = true;
-    try {
-      KS.resetType();
-      KS.send();
-    } catch (x) {}
-    think(R).catch(function () {
+    try { KS.resetType(); KS.send(); } catch (x) {}
+    think(E.respond(q, forced), ar).catch(function () {
       setPhase('answered');
       moving = false;
     });
   }
+
   async function reset() {
     if (phase !== 'answered' || moving) return;
     moving = true;
