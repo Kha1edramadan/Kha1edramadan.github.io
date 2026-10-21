@@ -5682,7 +5682,7 @@ window.KS = function () {
     terms: /تعديل|جولات|مراجعات|ملفات|مفتوح|صيغ|استلم|هستلم|الدفع|عربون|اقساط|حقوق|ملكيه|استرداد|خطوات|طريقه العمل|\b(revisions?|rounds?|files?|formats?|deliverables?|payment|deposit|refund|rights|copyright|process|steps)\b|\bhow\b.*\b(work|start)\b/,
     other: /مواقع|(?:تصميم|تصمم|تطوير|بناء) موقع|موقع الكتروني|تطبيق|برمجه|سوشيال|اداره حسابات|اعلانات|مونتاج|\b(websites?|ui|ux|apps?|development|social media|advertising|editing)\b/,
     work: /اعمال|مشاريع|مشروع|بروجيكت|نماذج|بورتفوليو|شغلك|الشغل|\b(work|works|projects?|portfolio|cases?|examples?)\b/,
-    service: /خدمات|خدمه|تصمم|تصميم|مصمم|شعار|شعارات|لوجو|هويه|هويات|تغليف|\b(services?|design|designer|branding|brand|identity|logo|logos|packaging)\b|what do you do|who is khaled|about khaled/,
+    service: /خدمات|خدمه|تصمم|تصميم|مصمم|شعار|شعارات|لوجو|هويه|هويات|براند|تغليف|تايبوجرافي|طيبوجرافي|خطوط|\b(services?|design|designer|branding|brand|identity|logo|logos|packaging|typography)\b|what do you do|who is khaled|about khaled/,
     who: /انت مين|من انت|هل انت خالد|انت بوت|ذكاء اصطناعي|\b(bot|ai|automated)\b|who are you|are you khaled/,
     contact: /تواصل|واتساب|ايميل|بريد|رقم|اكلم|اتصل|\b(contact|whatsapp|email|phone|reach)\b/,
     availability: /متاح|متفرغ|\b(available|availability|booking)\b|taking.*projects/,
@@ -5696,8 +5696,8 @@ window.KS = function () {
     time: ['There is no published delivery schedule. I cannot promise a completion date or estimate the duration from the information available.', 'لا توجد مدة تنفيذ معلنة على الموقع. لا أستطيع تحديد موعد تسليم أو تقدير مدة المشروع من المعلومات المتاحة.'],
     priceTime: ['The cost depends on your project’s requirements and scope, so the quote is tailored to the work involved. There are no specific prices or delivery times published here; I cannot give you a reliable figure or date.', 'تختلف التكلفة بحسب احتياجات المشروع ونطاق العمل المطلوب، ولذلك يُحدَّد عرض السعر لكل مشروع على حدة. لا يعرض الموقع أسعارًا أو مدد تنفيذ محددة، فلا أستطيع تأكيد مبلغ أو موعد تسليم.'],
     terms: ['The website does not specify the working process, payment terms, revision limits or delivery files. I cannot present any of these as an agreed part of the service.', 'لا يحدد الموقع خطوات العمل أو شروط الدفع أو عدد التعديلات أو ملفات التسليم. لا أستطيع اعتبار أيٍّ منها جزءًا متفقًا عليه من الخدمة.'],
-    service: ['Khaled Ramadan is a brand designer. The website presents visual identity and packaging as his areas of work.', 'خالد رمضان مصمم هويات بصرية. يعرض الموقع الهوية البصرية والتغليف ضمن مجالات عمله.'],
-    other: ['That service is not confirmed by the information on this website. The listed areas of work are visual identity and packaging.', 'المعلومات المنشورة لا تؤكد توفر هذه الخدمة. مجالات العمل المذكورة في الموقع هي الهوية البصرية والتغليف.'],
+    service: ['Khaled Ramadan is a brand designer.', 'خالد رمضان مصمم براند.'],
+    other: ['I do not have confirmed information about whether Khaled offers that service.', 'لا تتوفر لدي معلومات مؤكدة عن تقديم خالد لهذه الخدمة.'],
     who: ['I am the portfolio’s automated assistant. I search the information published here and keep track of the project we are discussing. I do not have access to private conversations or unpublished work.', 'أنا المساعد الآلي للموقع. أبحث في المعلومات المنشورة وأتابع سياق المشروع الذي نتحدث عنه. لا أطلع على المحادثات الخاصة أو الأعمال غير المنشورة.'],
     contact: ['The Contact section contains Khaled’s WhatsApp and email links. The “Start a Conversation” button below is the direct route to contact him.', 'تجد روابط واتساب والبريد الإلكتروني في قسم التواصل. زر «Start a Conversation» الموجود أسفل المساعد يتيح لك التواصل مباشرةً.'],
     availability: ['The website currently displays “Available to Work”. It does not publish a booking calendar or a confirmed start date.', 'يعرض الموقع عبارة «متاح للعمل»، لكنه لا يعرض جدول حجوزات أو موعدًا مؤكدًا لبدء مشروع جديد.'],
@@ -5749,6 +5749,8 @@ window.KS = function () {
       else if (direct.length === 1 && norm(direct[0].title) === q) intent = 'project';
       if (!intent && (direct.length || selected && follow)) intent = 'project';
       if (!intent && ids.includes('other')) intent = 'other';
+      const searching = /\b(show|find|search|looking|projects?|portfolio|cases?|examples?)\b|اعمال|مشاريع|مشروع|اعرض|وريني|ابحث/.test(q);
+      if (!intent && ids.includes('service') && !searching) intent = 'service';
       if (!intent && (ids.includes('work') || ranked.length)) intent = 'work';
       if (!intent) intent = ids.includes('service') ? 'service' : 'unknown';
       let answer, sources = [], found = [];
@@ -5775,6 +5777,16 @@ window.KS = function () {
         answer = !all.length ? (ar?'لا توجد مشاريع منشورة حاليًا. بطاقات العرض التجريبية ليست مشاريع منشورة.':'There are no published projects at the moment. The display templates are not published projects.') : !found.length ? (ar?'لم أجد مشروعًا منشورًا يطابق هذا الوصف. يمكنك البحث باسم المشروع أو بنوع العمل.':'I found no published project matching that description. Try a project name or type of work.') : (ar?'المشاريع المطابقة':'Matching projects') + ' (' + found.length + '):\n' + found.slice(0, 8).map((p,i) => (i+1) + '. ' + p.title).join('\n') + (found.length > 8 ? (ar?'\nتظهر بقية المشاريع في قسم الأعمال.':'\nThe remaining projects are in Work.') : '') + (ar?'\nيمكنك السؤال عن مشروع باسمه أو برقم ترتيبه.':'\nAsk about a project by name or position in this list.');
       } else {
         answer = (answers[intent] || answers.unknown)[ar ? 1 : 0];
+        if (intent === 'service') {
+          const requested = [
+            [/تغليف|عبوات|\bpackaging\b/, 'التغليف', 'packaging'],
+            [/شعار|شعارات|لوجو|\blogos?\b/, 'الشعارات', 'logos'],
+            [/هويه|هويات|\bidentity\b/, 'الهويات البصرية', 'visual identities']
+          ].filter(([pattern]) => pattern.test(q));
+          const general = /who is khaled|about khaled|من هو خالد/.test(q);
+          if (!general && requested.length) answer = ar ? 'نعم، يصمم خالد ' + requested.map(([,label]) => label).join(' و') + '.' : 'Yes, Khaled designs ' + requested.map(([, ,label]) => label).join(' and ') + '.';
+          else if (!general && /تايبوجرافي|طيبوجرافي|خطوط|\btypography\b/.test(q)) answer = ar ? 'نعم، يعمل على اختيار الخطوط وتنسيقها ضمن تصميم البراند.' : 'Yes, he works with typography as part of brand design.';
+        }
         if (intent === 'price' && ids.includes('other')) answer = ar ? 'الموقع يذكر الهوية البصرية والتغليف ضمن مجالات عمل خالد، ولا يؤكد توفر الخدمة التي تسأل عنها أو سعرًا لها. عمومًا، تختلف تكلفة التصميم بحسب احتياجات المشروع ونطاقه.' : 'The website lists visual identity and packaging as Khaled’s areas of work. It does not confirm the service you asked about or a rate for it. In general, design costs depend on a project’s requirements and scope.';
         if (state.last === intent && intent === 'price') answer = ar ? 'المعيار هو نطاق العمل: ما الذي يحتاجه المشروع، وما الذي يشمله التصميم المطلوب. من دون تحديد ذلك، لن يكون أي رقم تقديرًا دقيقًا. لا تتوفر لدي أسعار محددة أو حد أدنى معلن.' : 'The key is the scope: what the project needs and what the design work includes. Without that, a figure would not be a reliable estimate. I do not have published rates or a minimum fee to quote.';
         if (state.last === intent && ['time','terms'].includes(intent)) answer = ar ? 'لا تتوفر تفاصيل إضافية عن هذه النقطة في الموقع. لا أستطيع تقديم تقدير أو شروط غير منشورة.' : 'There are no further details on that point here. I cannot supply an estimate or terms that have not been published.';
