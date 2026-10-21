@@ -3162,6 +3162,214 @@ dialog::backdrop {
     letter-spacing: .025em;
   }
 }
+/* Keep the halftone texture behind the suggestion pills. */
+.ht-root .ask-chips button {
+  background: var(--bg-color);
+}
+.ht-root .ask-chips button:hover {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+/* The dot's own reveal stays under the existing hero animation. */
+.f-av i {
+  position: relative;
+  background: #35c76f;
+}
+.f-av i::before, .f-av i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid #35c76f;
+  animation: availability-ripple 2.4s ease-out infinite;
+}
+.f-av i::after { animation-delay: -1.2s; }
+@keyframes availability-ripple {
+  0% { transform: scale(1); opacity: .65; }
+  80%, 100% { transform: scale(3.4); opacity: 0; }
+}
+
+/* A quieter pulse suits the large red punctuation mark. */
+.ct-title i {
+  display: inline-block;
+  position: relative;
+  animation: none;
+}
+.ct-title i::after {
+  content: ''; position: absolute; pointer-events: none;
+  width: .105em; height: .105em; border: 1px solid currentColor; border-radius: 50%;
+  left: 50%; bottom: .075em; transform: translateX(-50%); opacity: 0;
+  animation: contact-signal 3.8s ease-out infinite;
+}
+@keyframes contact-signal {
+  0%, 30% { transform: translateX(-50%) scale(.8); opacity: 0; }
+  38% { opacity: .45; }
+  75%, 100% { transform: translateX(-50%) scale(2.3); opacity: 0; }
+}
+.chat-options-trigger { transition: background .18s ease, transform .18s ease; }
+.chat-options-trigger:active { transform: scale(.94); }
+.chat-options-trigger[aria-expanded="true"] { background: rgba(127,127,127,.12); }
+@media (prefers-reduced-motion: reduce) { .ct-title i::after { animation: none; } .chat-options-trigger { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .f-av i::before, .f-av i::after, .ct-title i {
+    animation: none;
+  }
+  .f-av i::before, .f-av i::after { opacity: 0; }
+}
+
+@property --chat-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.ask-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .65rem 1rem;
+}
+.thinking-controls { display: inline-flex; align-items: center; gap: .65rem; }
+.thinking-controls label { font-size: .68rem; color: var(--muted-color); }
+.thinking-controls select, .thinking-demo {
+  font: 500 .72rem var(--font-sans);
+  color: var(--text-color);
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  min-height: 32px;
+  padding: .3rem .65rem;
+}
+.thinking-demo { cursor: pointer; }
+.thinking-demo:disabled { opacity: .45; cursor: default; }
+.ht-in {
+  border-color: rgba(10,10,10,.25);
+  isolation: isolate;
+}
+.ht-in:focus-within { border-color: rgba(10,10,10,.4); }
+.ht-in::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--chat-border-angle), transparent 0deg 240deg, #0a0a0a 285deg 335deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: chat-border-travel 4.8s linear infinite;
+}
+/* Keep the moving segment legible when Contact uses its dark theme. */
+[data-theme="light"] .ht-in { border-color: rgba(242,242,239,.35); }
+[data-theme="light"] .ht-in::before {
+  background: conic-gradient(from var(--chat-border-angle), transparent 0deg 240deg, #f2f2ef 285deg 335deg, transparent 360deg);
+}
+@keyframes chat-border-travel { to { --chat-border-angle: 360deg; } }
+.voice-note {
+  position: absolute;
+  top: calc(var(--cy) + 34px);
+  left: 0;
+  right: 0;
+  padding: 0 .3rem;
+  font-size: .7rem;
+  line-height: 1.4;
+  color: var(--text-color);
+}
+.voice-note:empty { display: none; }
+.voice-note[dir="rtl"] { font-family: 'Cairo',var(--font-sans); }
+.ht-root:has(.voice-note:not(:empty)) .ask-chips { top: calc(var(--cy) + 94px); }
+.ht-in.is-recording #ask-mic { color: #c33333; background: rgba(195,51,51,.08); }
+.ht-in.is-recording .ask-wave { display: flex; }
+.ht-root[data-phase="thinking"] .voice-note, .ht-root[data-phase="answered"] .voice-note { display: none; }
+@media (max-width: 520px) {
+  .thinking-controls select, .thinking-demo { min-height: 40px; }
+  .ask-heading { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ht-in::before { animation: none; }
+}
+
+.ht-in { padding-left: .35rem; z-index: 10; }
+.chat-options-trigger {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--text-color);
+  background: transparent;
+  cursor: pointer;
+}
+.chat-options-trigger:hover, .chat-options-trigger[aria-expanded="true"] { background: var(--border-color); }
+.chat-options-trigger:focus-visible { outline: 2px solid var(--text-color); outline-offset: 2px; }
+.ht-root[data-phase="idle"] .ht-orb { opacity: 0; }
+.chat-options-menu {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: min(224px,calc(100vw - 48px));
+  padding: .6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,.08);
+  text-align: left;
+}
+.chat-options-menu[hidden] { display: none; }
+.thinking-choices { border: 0; min-width: 0; }
+.thinking-choices legend { font-size: .65rem; color: var(--muted-color); padding: .5rem .65rem; letter-spacing: .06em; text-transform: uppercase; }
+.thinking-choices label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 42px;
+  padding: .45rem .65rem;
+  border-radius: 9px;
+  font-size: .82rem;
+  cursor: pointer;
+}
+.thinking-choices label:hover, .thinking-choices label:has(input:checked) { background: var(--border-color); }
+.thinking-choices label:has(input:focus-visible) { outline: 1px solid var(--text-color); outline-offset: -1px; }
+.thinking-choices input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.thinking-choices label:has(input:checked)::after { content: ''; margin-left: auto; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.thinking-choices svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.visual-icon { width: 20px; text-align: center; font-size: 22px; }
+
+.voice-privacy{font-size:.65rem;line-height:1.5;color:var(--muted-color);padding:0 .55rem .65rem;}
+.ht-root[data-recording="true"] .ask-chips{opacity:.4;pointer-events:none;}
+
+/* Scoped menu scrolling; never inherit the site's heavy page scrollbar. */
+.chat-options-menu { scrollbar-width: thin; scrollbar-color: rgba(127,127,127,.38) transparent; overscroll-behavior: contain; }
+.chat-options-menu::-webkit-scrollbar { width: 4px; background: transparent; }
+.chat-options-menu::-webkit-scrollbar-track { background: transparent; border: 0; }
+.chat-options-menu::-webkit-scrollbar-thumb { background: rgba(127,127,127,.38); border: 0; border-radius: 8px; }
+.chat-options-menu::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.thinking-choices legend { padding: .4rem .65rem; }
+.thinking-choices label { min-height: 44px; }
+.voice-privacy { padding: .4rem .55rem .2rem; }
+
+.thinking-choices { display: block; }
+.thinking-choices legend { float: none; width: 100%; }
+.thinking-choices label { gap: .5rem; padding: .4rem .55rem; font-size: .77rem; }
+.voice-privacy { font-size: .6rem; }
+.chat-options-menu { overflow: visible; }
+
+/* Shared testimonial rhythm: header/footer stay aligned for every quote. */
+@media (min-width: 769px) {
+  .fb-panel { display: grid; grid-template-rows: auto minmax(0,1fr) auto; padding: 2rem; gap: 1rem; }
+  .fb-top { padding-bottom: 1rem; }
+  .fb-bot { padding-top: 1rem; }
+  .fb-quote, .fb-quote.ar { min-height: 0; align-self: center; display: block; font-size: clamp(1.05rem,1.5vw,1.4rem); line-height: 1.5; }
+  .fb-quote.ar { line-height: 1.75; }
+}
+.fb-quote { overflow-wrap: break-word; }
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;800&family=Anton&display=swap" rel="stylesheet">
 </head>
@@ -3256,10 +3464,22 @@ dialog::backdrop {
           <div class="ht-root" id="mo-root" data-phase="idle">
             <canvas class="ht-orb" id="ht-orb" aria-hidden="true"></canvas>
             <form class="ht-in" id="ask-form" autocomplete="off">
+              <button class="chat-options-trigger" id="chat-options-trigger" type="button" aria-label="Chat options" aria-expanded="false" aria-controls="chat-options-menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+<div class="chat-options-menu" id="chat-options-menu" hidden>
+  <fieldset class="thinking-choices"><legend>Thinking visual</legend>
+    <label><input type="radio" name="thinking-visual" value="halftone" checked><svg viewBox="0 0 20 20" aria-hidden="true"><g fill="currentColor" stroke="none"><circle cx="5" cy="5" r="1.5"/><circle cx="10" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><circle cx="5" cy="15" r="1.5"/><circle cx="10" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/></g></svg><span>Halftone</span></label>
+    <label><input type="radio" name="thinking-visual" value="sync"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 3 0 7m-6 5 6-5 6 5"/><circle cx="10" cy="3" r="2"/><circle cx="4" cy="15" r="2"/><circle cx="16" cy="15" r="2"/></svg><span>AI Sync</span></label>
+    <label><input type="radio" name="thinking-visual" value="neural"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 4 12 3-9 9L4 4l11 10"/><circle cx="4" cy="4" r="2"/><circle cx="16" cy="7" r="2"/><circle cx="7" cy="16" r="2"/></svg><span>Neural</span></label>
+    <label><input type="radio" name="thinking-visual" value="orbit"><svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="10" rx="8" ry="4" transform="rotate(-35 10 10)"/><circle cx="10" cy="10" r="2"/></svg><span>Orbit</span></label>
+    <label><input type="radio" name="thinking-visual" value="pulse"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="3"/></svg><span>Pulse</span></label>
+  </fieldset>
+</div>
+
                   <input class="ht-field" id="ask-in" dir="auto" maxlength="1500" enterkeyhint="send" autocapitalize="sentences" spellcheck="false" placeholder="Pricing, timeline, process..." aria-label="Ask a question">
                   <span class="ask-wave" id="ask-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-                  <span class="ask-slot"><button type="button" id="ask-mic" aria-label="Voice input"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><rect x="5" y="1" width="4" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.75 6.5V7a4.25 4.25 0 0 0 8.5 0v-.5M7 11.25V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button type="submit" id="ask-send" aria-label="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button></span>
+                  <span class="ask-slot"><button type="button" id="ask-mic" aria-label="Voice input" title="Record voice; Google converts the recording to text"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><rect x="5" y="1" width="4" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.75 6.5V7a4.25 4.25 0 0 0 8.5 0v-.5M7 11.25V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button type="submit" id="ask-send" aria-label="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button></span>
             </form>
+            <div class="voice-note" id="voice-note" role="status" aria-live="polite"></div>
             <div class="ht-status" id="mo-status" aria-hidden="true"></div>
             <div class="ht-answer" id="mo-answer" tabindex="-1" role="group" aria-label="Answer">
               <div class="ht-a-head"><span id="mo-a-title">Answer</span><button type="button" class="ht-reset" id="mo-reset">New question</button></div>
@@ -3508,117 +3728,140 @@ const __khBoot = fn => {
   // An empty published result is authoritative, including after unpublishing every project.
   window.__khWorks = live.then(apply).catch(() => apply([])).finally(() => clearTimeout(timeout));
 })();
-const FEEDBACK_DATA = [{
-  "name": "Meow Mates brand",
-  "country": "United Kingdom (UK)",
-  "code": "UK",
-  "quote": "Khaled was very polite and helpful. He created many different revisions until I was happy with the outcome. He also sent several different files because I am very indecessive and couldnt pick between two designs. Will definitely be hiring him for future projects and can recommend him to anyone."
-}, {
-  "name": "Islam",
-  "country": "Libya",
-  "code": "LY",
-  "quote": "Khaled Ramathan is a professional and kind designer. He communicates effectively, responds quickly, and delivered the logo on time with exceptional quality. His creativity and attention to detail exceeded my expectations. Highly recommended!"
-}, {
-  "name": "Mark",
-  "country": "Australia",
-  "code": "AU",
-  "quote": "Khaled did an amazing job designing our company's logo. He was creative, professional, and really understood our vision. The final logo looks fantastic and perfectly represents our brand. We highly recommend Khaled for any design work!"
-}, {
-  "name": "Jeremy",
-  "country": "Australia",
-  "code": "AU",
-  "quote": "Khaled is one of the most talented designers I have worked with. He has the unique ability to perfectly encapsulate the emotions and identity of every branding project. Will definitely aim to work with him again."
-}, {
-  "name": "Eliad",
-  "country": "Moldova",
-  "code": "MD",
-  "quote": "Great communication and understanding of the idea i provided and concept that he worked on. Great graphic skills, will definitely work with him again when that will be needed. Thanks!"
-}, {
-  "name": "Alhasan A",
-  "country": "United Arab Emirates (UAE)",
-  "code": "AE",
-  "quote": "شكرا جزيلا الك التجربة سريعة جدا بعدد جيد من التعديلات للوصول حتى المنتج النهائي المرضي تم التعامل بحرفية وسرعة مع جميع التعديلات"
-}, {
-  "name": "Mohamed Wasel",
-  "country": "United Arab Emirates (UAE)",
-  "code": "AE",
-  "quote": "Khalid is professional friendly and very cooperative. He delivered on timecand within budjet. I will hire him again."
-}, {
-  "name": "عبد الله",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "إنسان ذوقه عالي، ومتفهم، ومرن، وخلوق، وسريع التنفيذ، عملت معه مرة ولن أتردد بتكرار التجربة"
-}, {
-  "name": "Mohammed A",
-  "country": "United Arab Emirates (UAE)",
-  "code": "AE",
-  "quote": "أ. خالد انسان مبدع شغلة راقي ، سهوله في توصيل الأفكار ومتعاون"
-}, {
-  "name": "إبراهيم",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "‏رائع جدا ثاني مرة أتعامل معه ولن تكون الأخيرة إن شاء الله"
-}, {
-  "name": "Salem A",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "للمرة الثانية شكرا اخي خالد متعاون جدا وانصحكم فيه"
-}, {
-  "name": "Richard",
-  "country": "South Africa",
-  "code": "ZA",
-  "quote": "This is a man of honour and willingness. I will definitely use his services again, as he not only delivered, but went out of his way with an amazing attitude of perfect service. I am not sure if he is \"normal\" ... he is exceptional!!! Thanks Khaled"
-}, {
-  "name": "Hannah",
-  "country": "United States (USA)",
-  "code": "US",
-  "quote": "They did what I asked and then gave me a few other options as well. I actually ended up liking his other designs better than what I thought I wanted and chose his as the winner amongst 100 other entries. Great job! Thank you immensely."
-}, {
-  "name": "Jeremy",
-  "country": "Australia",
-  "code": "AU",
-  "quote": "This designer excels at his work and is able to consistently create top tier designs. Every project he's been involved in has been a huge success and couldn't recommend more highly. If I could give more than 5 stars I would!"
-}, {
-  "name": "Shamsul",
-  "country": "United Kingdom (UK)",
-  "code": "UK",
-  "quote": "Khaled's communication is excellent and his design work is exceptional. I cannot fault his work, it is amazing. I am so happy with the result. Thank you Khaled, will work with you again in the future if required."
-}, {
-  "name": "Salem A",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "الشكر للأخ خالد انسان خلوق وصبور بمعنى الكلمة اولا شغل احترافي ماشاء الله تبارك الله وليس اخر تعامل بحول الله ثانيا التأخير مني في استلام المشروع والتعديلات شكرا جزيلا"
-}, {
-  "name": "يوسف",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "من افضل المصممين الي تعاملت معهم ماشاء الله تعامل رائع، احترافية في التصميم ودقة في العمل كل الشكر وباذن الله لنا تعامل اخر قريبا"
-}, {
-  "name": "Alex",
-  "country": "United States (USA)",
-  "code": "US",
-  "quote": "Thank you for your patience and good work and will be working together on several future projects"
-}, {
-  "name": "Sundus A",
-  "country": "Kuwait",
-  "code": "KW",
-  "quote": "سريع وما قصّر معي نهائيًا، فهم اللي احتاجه بالضبط واشتغل عليهم بضمير، بارك الله فيه"
-}, {
-  "name": "Ahmad M",
-  "country": "Libya",
-  "code": "LY",
-  "quote": "ما شاء الله اخلاق مع احتراف وسرعة انجاز سوف اعمل معه في المستقبل انصح بخدماته"
-}, {
-  "name": "Nouralddeen A",
-  "country": "Libya",
-  "code": "LY",
-  "quote": "سريع وانسان جميل في تعامله وفي اسلوبه وكل شي انصحكم بيه كثير"
-}, {
-  "name": "مالك",
-  "country": "Saudi Arabia",
-  "code": "SA",
-  "quote": "الرجل احترافي بشكل كبير ماشاء الله وجدا سعيد بالتعامل معه"
-}];
+const FEEDBACK_DATA = [
+  {
+    "name": "Meow Mates brand",
+    "country": "United Kingdom (UK)",
+    "code": "UK",
+    "quote": "Khaled was very polite and helpful. He created many different revisions until I was happy with the outcome. He also sent several different files because I am very indecisive and couldn't pick between two designs. Will definitely be hiring him for future projects and can recommend him to anyone."
+  },
+  {
+    "name": "Islam",
+    "country": "Libya",
+    "code": "LY",
+    "quote": "Khaled Ramathan is a professional and kind designer. He communicates effectively, responds quickly, and delivered the logo on time with exceptional quality. His creativity and attention to detail exceeded my expectations. Highly recommended!"
+  },
+  {
+    "name": "Mark",
+    "country": "Australia",
+    "code": "AU",
+    "quote": "Khaled did an amazing job designing our company's logo. He was creative, professional, and really understood our vision. The final logo looks fantastic and perfectly represents our brand. We highly recommend Khaled for any design work!"
+  },
+  {
+    "name": "Jeremy",
+    "country": "Australia",
+    "code": "AU",
+    "quote": "Khaled is one of the most talented designers I have worked with. He has the unique ability to perfectly encapsulate the emotions and identity of every branding project. Will definitely aim to work with him again."
+  },
+  {
+    "name": "Eliad",
+    "country": "Moldova",
+    "code": "MD",
+    "quote": "Great communication and understanding of the idea I provided and concept that he worked on. Great graphic skills, will definitely work with him again when that will be needed. Thanks!"
+  },
+  {
+    "name": "Alhasan A",
+    "country": "United Arab Emirates (UAE)",
+    "code": "AE",
+    "quote": "شكرًا جزيلًا إلك. التجربة سريعة جدًا، بعدد جيد من التعديلات للوصول حتى المنتج النهائي المرضي. تم التعامل بحرفية وسرعة مع جميع التعديلات."
+  },
+  {
+    "name": "Mohamed Wasel",
+    "country": "United Arab Emirates (UAE)",
+    "code": "AE",
+    "quote": "Khalid is professional, friendly and very cooperative. He delivered on time and within budget. I will hire him again."
+  },
+  {
+    "name": "عبد الله",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "إنسان ذوقه عالي، ومتفهم، ومرن، وخلوق، وسريع التنفيذ. عملت معه مرة ولن أتردد بتكرار التجربة."
+  },
+  {
+    "name": "Mohammed A",
+    "country": "United Arab Emirates (UAE)",
+    "code": "AE",
+    "quote": "أ. خالد إنسان مبدع، شغله راقٍ، سهولة في توصيل الأفكار ومتعاون."
+  },
+  {
+    "name": "إبراهيم",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "رائع جدًا. ثاني مرة أتعامل معه، ولن تكون الأخيرة إن شاء الله."
+  },
+  {
+    "name": "Salem A",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "للمرة الثانية، شكرًا أخي خالد. متعاون جدًا وأنصحكم فيه."
+  },
+  {
+    "name": "Richard",
+    "country": "South Africa",
+    "code": "ZA",
+    "quote": "This is a man of honour and willingness. I will definitely use his services again, as he not only delivered, but went out of his way with an amazing attitude of perfect service. I am not sure if he is \"normal\" ... he is exceptional!!! Thanks, Khaled."
+  },
+  {
+    "name": "Hannah",
+    "country": "United States (USA)",
+    "code": "US",
+    "quote": "They did what I asked and then gave me a few other options as well. I actually ended up liking his other designs better than what I thought I wanted and chose his as the winner amongst 100 other entries. Great job! Thank you immensely."
+  },
+  {
+    "name": "Jeremy",
+    "country": "Australia",
+    "code": "AU",
+    "quote": "This designer excels at his work and is able to consistently create top tier designs. Every project he's been involved in has been a huge success and couldn't recommend more highly. If I could give more than 5 stars I would!"
+  },
+  {
+    "name": "Shamsul",
+    "country": "United Kingdom (UK)",
+    "code": "UK",
+    "quote": "Khaled's communication is excellent and his design work is exceptional. I cannot fault his work, it is amazing. I am so happy with the result. Thank you Khaled, will work with you again in the future if required."
+  },
+  {
+    "name": "Salem A",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "الشكر للأخ خالد، إنسان خلوق وصبور بمعنى الكلمة. أولًا، شغل احترافي ما شاء الله تبارك الله، وليس آخر تعامل بحول الله. ثانيًا، التأخير مني في استلام المشروع والتعديلات. شكرًا جزيلًا."
+  },
+  {
+    "name": "يوسف",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "من أفضل المصممين اللي تعاملت معهم، ما شاء الله. تعامل رائع، احترافية في التصميم ودقة في العمل. كل الشكر، وبإذن الله لنا تعامل آخر قريبًا."
+  },
+  {
+    "name": "Alex",
+    "country": "United States (USA)",
+    "code": "US",
+    "quote": "Thank you for your patience and good work and will be working together on several future projects."
+  },
+  {
+    "name": "Sundus A",
+    "country": "Kuwait",
+    "code": "KW",
+    "quote": "سريع وما قصّر معي نهائيًا، فهم اللي احتاجه بالضبط واشتغل عليهم بضمير، بارك الله فيه."
+  },
+  {
+    "name": "Ahmad M",
+    "country": "Libya",
+    "code": "LY",
+    "quote": "ما شاء الله، أخلاق مع احتراف وسرعة إنجاز. سوف أعمل معه في المستقبل، أنصح بخدماته."
+  },
+  {
+    "name": "Nouralddeen A",
+    "country": "Libya",
+    "code": "LY",
+    "quote": "سريع وإنسان جميل في تعامله وفي أسلوبه وكل شيء. أنصحكم بيه كثير."
+  },
+  {
+    "name": "مالك",
+    "country": "Saudi Arabia",
+    "code": "SA",
+    "quote": "الرجل احترافي بشكل كبير، ما شاء الله، وجدا سعيد بالتعامل معه."
+  }
+];
 __khBoot(() => {
   const root = document.documentElement;
   const themeBtn = document.getElementById('theme-toggle');
@@ -3840,7 +4083,6 @@ __khBoot(() => {
     });
     if (prevBtn) prevBtn.disabled = currentSlide === 0;
     if (nextBtn) nextBtn.disabled = currentSlide === slides.length - 1;
-    if (carouselReady) SoundEngine.lensTick(currentSlide % 2 === 0 ? 1 : 1.1);
   }
   if (prevBtn) prevBtn.addEventListener('click', () => updateCarousel(currentSlide - 1));
   if (nextBtn) nextBtn.addEventListener('click', () => updateCarousel(currentSlide + 1));
@@ -4029,11 +4271,6 @@ __khBoot(() => {
         ease: 'power3.out',
         overwrite: true
       });
-      if (anim) {
-        try {
-          SoundEngine.lensTick(1 + i % 5 * .04);
-        } catch (e) {}
-      }
     };
     S.forEach(function (s, i) {
       s.addEventListener('mousemove', function (e) {
@@ -4051,6 +4288,7 @@ __khBoot(() => {
       });
       s.addEventListener('click', function () {
         if (moved > 5) return;
+        SoundEngine.click();
         if (i !== cur) set(i, true, true);
       });
       s.addEventListener('focus', function () {
@@ -5255,7 +5493,7 @@ window.KS = function () {
     cv.connect(rs);
     rs.connect(C);
     /* category buses: ui keeps a small room, scroll even less, transitions keep the full original room */
-    mk('ui', .28);
+    mk('ui', .10);
     mk('sc', .2);
     mk('tr', 1);
     var t = AC.currentTime + off;
@@ -5428,10 +5666,10 @@ window.KS = function () {
     hover: function () {},
     /* soft press: low body D3 -> A2 + a small filtered tap */
     click: function () {
-      if (!ok() || !gate('ui', 30)) return;
-      var d = .97 + Math.random() * .06;
-      tone(B.ui, 146.83 * d, 110 * d, .085, .042, 'sine', 0, .005);
-      nz(B.ui, 1150 * d, .7, .02, .028, 'lowpass', 0, 620, .004);
+      if (!ok() || !gate('ui', 90)) return;
+      var d = 1;
+      tone(B.ui, 176 * d, 132 * d, .035, .023, 'sine', 0, .003);
+      nz(B.ui, 980 * d, .55, .014, .019, 'lowpass', 0, 580, .002);
     },
     /* selection tick: each slide index has its own pentatonic note */
     lens: function (p) {
@@ -5442,56 +5680,22 @@ window.KS = function () {
       nz(B.ui, f * 4.7, .7, .016, .02, 'lowpass', 0, 760, .004);
     },
     /* chat typing: max 6 soft ticks per answer, walking down/up the scale, fading out */
-    type: function () {
-      if (!ok()) return;
-      var n = performance.now();
-      if (!testing && n - tt > 700) tb = 0;
-      tt = n;
-      if (tb >= 6 || !gate('ty', 60)) return;
-      var f = [880, 698.46, 587.33, 698.46, 783.99, 880][tb % 6] * (.99 + Math.random() * .02),
-        v = .013 * (1 - tb * .09);
-      tb++;
-      tone(B.ui, f, f * .85, .03, v, 'sine', 0, .004);
-      nz(B.ui, 3200, 1.6, .012, .015, 'bandpass', 0, 0, .004);
-    },
+    type: function () {},
     resetType: function () {
       tb = 0;
     },
     /* chat: message sent (up-glide press) and answer received (soft A4 -> D5) */
-    send: function () {
-      if (!ok() || !gate('ui', 30)) return;
-      tone(B.ui, 196, 293.66, .07, .04, 'sine', 0, .004);
-      nz(B.ui, 1500, .7, .016, .024, 'lowpass', 0, 900, .003);
-    },
-    recv: function () {
-      if (!ok() || !gate('rv', 250)) return;
-      tone(B.ui, 440, 440, .16, .03, 'sine', 0, .01);
-      tone(B.ui, 587.33, 587.33, .2, .026, 'sine', .09, .01);
-    },
+    send: function () { api.click(); },
+    recv: function () {},
     confirm: function () {
-      api.recv();
+      api.click();
     },
     /* project dialog: no pitch glides, no melody. Open = the same soft press as a click with a tiny breath of air;
        close = a quieter, lower, dry tap. Both stay in the click family so they read as UI, not as a toy. */
-    open: function () {
-      if (!ok() || !gate('dl', 200)) return;
-      tone(B.ui, 146.83, 110, .09, .04, 'sine', 0, .005);
-      nz(B.ui, 1150, .7, .02, .026, 'lowpass', 0, 620, .004);
-      nz(B.ui, 1100, .9, .14, .012, 'bandpass', .02, 1500, .05);
-    },
-    close: function () {
-      if (!ok() || !gate('dl', 200)) return;
-      tone(B.ui, 130.81, 98, .07, .026, 'sine', 0, .005);
-      nz(B.ui, 900, .7, .016, .016, 'lowpass', 0, 520, .004);
-    },
+    open: function () { api.click(); },
+    close: function () { api.click(); },
     /* theme switch: two notes, down for dark, up for light */
-    theme: function (light) {
-      if (!ok() || !gate('th', 200)) return;
-      var a = light ? 293.66 : 440,
-        b = light ? 440 : 293.66;
-      tone(B.ui, a, a, .12, .028, 'sine', 0, .006);
-      tone(B.ui, b, b, .16, .028, 'sine', .075, .006);
-    },
+    theme: function () { api.click(); },
     /* page transitions: original character, now exclusive + ducking */
     whoosh: function () {
       if (!ok() || !gate('w', 800)) return;
@@ -5577,6 +5781,11 @@ window.KS = function () {
   });
   function wire() {
     label();
+    document.addEventListener('click',function(event){
+      var target=event.target.closest('button,a,label,[role="button"]');
+      if(!target || target.closest('#feedback') || target.disabled || target.id==='sound-toggle')return;
+      api.click();
+    });
     var b = document.getElementById('sound-toggle');
     if (b) b.addEventListener('click', function () {
       init();
@@ -5657,7 +5866,6 @@ window.KS = function () {
     snd = document.getElementById('ask-send'),
     wave = document.getElementById('ask-wave');
   var G = window.gsap,
-    SR = window.SpeechRecognition || window.webkitSpeechRecognition,
     AR = /[\u0600-\u06FF]/,
     rec = null,
     E = window.SourcePortfolioAssistant.create();
@@ -5702,6 +5910,39 @@ window.KS = function () {
     });
   };
   /* halftone sphere: a dot grid shaded by a light that orbits the surface */
+  var visualChoices = Array.from(document.querySelectorAll('input[name="thinking-visual"]')),
+    optionsTrigger = document.getElementById('chat-options-trigger'),
+    optionsMenu = document.getElementById('chat-options-menu'),
+    visualMode = 'halftone';
+  var visualModes = ['halftone','sync','neural','orbit','pulse'];
+  try { var savedVisual = localStorage.getItem('khaled-thinking-visual'); if(visualModes.includes(savedVisual))visualMode=savedVisual; } catch (_) {}
+  function closeOptions(focus) {
+    optionsMenu.hidden = true; optionsTrigger.setAttribute('aria-expanded','false');
+    if(focus) optionsTrigger.focus({preventScroll:true});
+  }
+  visualChoices.forEach(function(choice){
+    choice.checked = choice.value === visualMode;
+    choice.addEventListener('change',function(){
+      if(!choice.checked)return;
+      visualMode = choice.value;
+      try{localStorage.setItem('khaled-thinking-visual',visualMode);}catch(_){}
+      paint(); kick(); if(window.KS)KS.click(); closeOptions(true);
+    });
+  });
+  optionsTrigger.addEventListener('click',function(){
+    var opening = optionsMenu.hidden;
+    optionsMenu.hidden = !opening; optionsTrigger.setAttribute('aria-expanded',String(opening));
+    if(window.KS)KS.click();
+    paint(); kick();
+    if(opening) {
+      var formRect=f.getBoundingClientRect(),above=formRect.top-84,below=innerHeight-formRect.bottom-16;
+      var putAbove=above>=optionsMenu.offsetHeight+12 || above>below;
+      optionsMenu.style.bottom=putAbove?'calc(100% + 12px)':'auto';
+      optionsMenu.style.top=putAbove?'auto':'calc(100% + 12px)';
+      var selected = visualChoices.find(function(choice){return choice.checked;}); if(selected) selected.focus({preventScroll:true}); }
+  });
+  document.addEventListener('click',function(event){if(!optionsMenu.hidden&&!optionsMenu.contains(event.target)&&!optionsTrigger.contains(event.target))closeOptions(false);});
+  optionsMenu.addEventListener('keydown',function(event){if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeOptions(true);}});
   var S = 220,
     N = 22,
     CS = S / N,
@@ -5722,8 +5963,42 @@ window.KS = function () {
     ink = getComputedStyle(moRoot).color;
   }
   function paint() {
+    drawVisual(g);
+  }
+  function drawVisual(g) {
     g.clearRect(0, 0, S, S);
     g.fillStyle = ink;
+    if (visualMode === 'neural') {
+      g.globalAlpha=Math.max(0,1-P.dis); var nodes=[];
+      for(var ni=0;ni<9;ni++){var na=ni/8*Math.PI*2, nr=ni===8?0:62+8*Math.sin(ang+ni);nodes.push({x:110+Math.cos(na)*nr,y:110+Math.sin(na)*nr});}
+      g.strokeStyle=ink;g.lineWidth=1;
+      for(var nn=0;nn<8;nn++){g.globalAlpha=(.12+.18*(.5+.5*Math.sin(ang*3-nn)))*(1-P.dis);g.beginPath();g.moveTo(nodes[nn].x,nodes[nn].y);g.lineTo(nodes[8].x,nodes[8].y);g.lineTo(nodes[(nn+2)%8].x,nodes[(nn+2)%8].y);g.stroke();}
+      nodes.forEach(function(n,i){g.globalAlpha=(.4+.6*(.5+.5*Math.sin(ang*3-i*.8)))*(1-P.dis);g.beginPath();g.arc(n.x,n.y,i===8?6:3.5,0,Math.PI*2);g.fill();});g.globalAlpha=1;return;
+    }
+    if (visualMode === 'orbit') {
+      g.globalAlpha=Math.max(0,1-P.dis);g.strokeStyle=ink;g.lineWidth=1.3;
+      for(var oi=0;oi<3;oi++){g.save();g.translate(110,110);g.rotate(oi*Math.PI/3);g.globalAlpha=.2*(1-P.dis);g.beginPath();g.ellipse(0,0,74,29,0,0,Math.PI*2);g.stroke();g.globalAlpha=1-P.dis;var ot=ang*(1.2+oi*.25)+oi*2;g.beginPath();g.arc(Math.cos(ot)*74,Math.sin(ot)*29,3.5,0,Math.PI*2);g.fill();g.restore();}
+      g.globalAlpha=1-P.dis;g.beginPath();g.arc(110,110,5,0,Math.PI*2);g.fill();g.globalAlpha=1;return;
+    }
+    if (visualMode === 'pulse') {
+      g.strokeStyle=ink;g.lineWidth=1.7;
+      for(var pi=0;pi<3;pi++){var progress=((ang*.32+pi/3)%1+1)%1;g.globalAlpha=(1-progress)*.7*(1-P.dis);g.beginPath();g.arc(110,110,12+progress*70,0,Math.PI*2);g.stroke();}
+      g.globalAlpha=(.75+.25*Math.sin(ang*3))*(1-P.dis);g.beginPath();g.arc(110,110,5,0,Math.PI*2);g.fill();g.globalAlpha=1;return;
+    }
+    if (visualMode === 'sync') {
+      // Three signals converge, then align in one shared rhythm.
+      g.strokeStyle=ink;g.lineWidth=1.3;
+      var beat=.5+.5*Math.sin(ang*3), alignment=.5+.5*Math.sin(ang*.8);
+      for(var si=0;si<3;si++){
+        var sa=si*Math.PI*2/3-Math.PI/2, radius=55+10*(1-alignment)*Math.sin(ang*2+si*2);
+        var sx=110+Math.cos(sa)*radius, sy=110+Math.sin(sa)*radius;
+        g.globalAlpha=.18*(1-P.dis);g.beginPath();g.moveTo(sx,sy);g.lineTo(110,110);g.stroke();
+        var travel=((ang*.65+si/3)%1+1)%1;
+        g.globalAlpha=(.45+.4*beat)*(1-P.dis);g.beginPath();g.arc(sx+(110-sx)*travel,sy+(110-sy)*travel,2.5,0,Math.PI*2);g.fill();
+        g.globalAlpha=(.55+.45*beat)*(1-P.dis);g.beginPath();g.arc(sx,sy,4+beat*1.5,0,Math.PI*2);g.fill();
+      }
+      g.globalAlpha=(.65+.35*beat)*(1-P.dis);g.beginPath();g.arc(110,110,6+beat*2,0,Math.PI*2);g.fill();g.globalAlpha=1;return;
+    }
     var lx = Math.cos(ang) * .75,
       ly = Math.sin(ang) * .75,
       lz = .55,
@@ -5837,6 +6112,7 @@ window.KS = function () {
   }
   function setPhase(p) {
     phase = p;
+    if (p !== 'idle') closeOptions(false);
     moRoot.setAttribute('data-phase', p);
   }
   function fit() {
@@ -5930,6 +6206,8 @@ window.KS = function () {
     moving = false;
   }
   function begin(q, forced) {
+    if (rec) { stopRec(); return; }
+    voiceNote.textContent = '';
     var ar = AR.test(q) || !/[a-z]/i.test(q) && E.state.L === 'ar';
     cp = ar ? CP_AR : CP_EN;
     var assistantLabel = document.querySelector('.ask > .ct-k');
@@ -6000,8 +6278,8 @@ window.KS = function () {
   });
   function sync() {
     var has = inp.value.trim() !== '',
-      showMic = !has && !!SR,
-      showSend = has || !SR;
+      showMic = !!rec || !has,
+      showSend = has && !rec;
     inp.classList.toggle('ar', AR.test(inp.value));
     snd.disabled = !has;
     if (!G) {
@@ -6026,51 +6304,63 @@ window.KS = function () {
       });
     }
   }
-  function stopRec() {
-    if (rec) {
-      try {
-        rec.stop();
-      } catch (e) {}
-      rec = null;
-    }
-    wave.classList.remove('on');
-    if (G) G.killTweensOf(wave.children);
+  var voiceNote=document.getElementById('voice-note');
+  var voiceTimer=0,voiceStarting=false,voiceBusy=false,voiceStream=null,voiceBase='',recordedChunks=[];
+  function voiceArabic(){return /[\u0600-\u06ff]/.test(inp.value)||/^ar/i.test(navigator.language);}
+  function sayVoice(arabic,english){voiceNote.textContent=voiceArabic()?arabic:english;voiceNote.dir=voiceArabic()?'rtl':'ltr';}
+  function releaseMicrophone(){
+    clearTimeout(voiceTimer);
+    if(voiceStream){voiceStream.getTracks().forEach(function(track){track.stop();});voiceStream=null;}
+    f.classList.remove('is-recording');moRoot.removeAttribute('data-recording');wave.classList.remove('on');
+    mic.setAttribute('aria-pressed','false');mic.setAttribute('aria-label','Voice input');
+    optionsTrigger.disabled=false;inp.readOnly=false;
+    if(G){G.killTweensOf(wave.children);G.set(wave.children,{clearProps:'height'});}
   }
-  mic.addEventListener('click', function () {
-    if (!SR) return;
-    if (rec) {
-      stopRec();
-      return;
-    }
-    rec = new SR();
-    rec.lang = E.state.turn || !/^ar/i.test(navigator.language) ? E.recLang() : 'ar-EG';
-    rec.interimResults = true;
-    rec.onresult = function (e) {
-      var t = '';
-      for (var i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-      inp.value = t;
-      sync();
-      if (e.results[e.results.length - 1].isFinal) {
-        stopRec();
-        ask(inp.value);
-      }
-    };
-    rec.onerror = rec.onend = function () {
-      stopRec();
-    };
-    wave.classList.add('on');
-    if (G) G.to(wave.children, {
-      height: function () {
-        return 6 + Math.random() * 16;
-      },
-      duration: .18,
-      repeat: -1,
-      repeatRefresh: true,
-      yoyo: true,
-      stagger: .04
-    });
-    rec.start();
+  function stopRec(){if(rec&&rec.state!=='inactive'){try{rec.stop();}catch(_){rec=null;releaseMicrophone();sync();}}}
+  async function convertRecording(blob,mimeType){
+    if(blob.size<300){sayVoice('التسجيل قصير جدًا. جرّب تاني.','The recording was too short. Please try again.');return;}
+    if(blob.size>480000){sayVoice('التسجيل كبير. جرّب تسجيل أقصر.','The recording is too large. Try a shorter clip.');return;}
+    voiceBusy=true;moving=true;f.setAttribute('inert','');setPhase('thinking');
+    setLabel(voiceArabic()?'بحوّل الصوت لنص':'Transcribing audio');tween('spd',3.2,600);
+    var controller=new AbortController(),timer=setTimeout(function(){controller.abort();},28000);
+    try{
+      var encoded=await new Promise(function(resolve,reject){var reader=new FileReader();reader.onload=function(){resolve(String(reader.result).split(',')[1]);};reader.onerror=reject;reader.readAsDataURL(blob);});
+      var response=await fetch('https://ai-bot.aeaeaeessaee.workers.dev/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',signal:controller.signal,body:JSON.stringify({audio:encoded,mimeType:mimeType,language:'auto'})});
+      if(response.status===429){sayVoice('وصلنا لحد تحويل الصوت مؤقتًا. جرّب بعد دقيقة أو اكتب سؤالك.','Voice transcription has reached a temporary limit. Try in a minute or type your question.');return;}
+      if(!response.ok)throw Error('transcription');
+      var data=await response.json();if(typeof data.transcript!=='string')throw Error('format');
+      if(!data.transcript.trim()){sayVoice('ماسمعتش كلام واضح. اضغط الميكروفون وجرّب تاني.','No clear speech was detected. Press the microphone to try again.');return;}
+      inp.value=[voiceBase,data.transcript.trim()].filter(Boolean).join(' ').slice(0,1500);
+      sayVoice('الكلام اتكتب. راجعه واضغط إرسال لما تكون جاهز.','Your words are in the box. Review them, then press Send.');
+    }catch(error){sayVoice(error.name==='AbortError'?'التحويل اتأخر. جرّب تاني أو اكتب سؤالك.':'تعذّر تحويل التسجيل دلوقتي. جرّب تاني أو اكتب سؤالك.',error.name==='AbortError'?'Transcription took too long. Try again or type your question.':'The recording could not be transcribed. Try again or type your question.');}
+    finally{clearTimeout(timer);voiceBusy=false;moving=false;P.spd=.5;setPhase('idle');f.removeAttribute('inert');sync();try{inp.focus({preventScroll:true});}catch(_){}}
+  }
+  mic.addEventListener('click',async function(){
+    if(rec){stopRec();return;}
+    if(voiceStarting||voiceBusy||moving||phase!=='idle')return;
+    if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){sayVoice('التسجيل مش مدعوم في المتصفح ده. اكتب سؤالك أو جرّب متصفح أحدث.','Recording is unavailable in this browser. Type your question or try another browser.');return;}
+    voiceStarting=true;mic.disabled=true;sayVoice('اسمح باستخدام الميكروفون لبدء التسجيل.','Allow microphone access to start recording.');
+    try{
+      voiceStream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true},video:false});
+      var type=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'].find(function(t){return MediaRecorder.isTypeSupported(t);});
+      var options={audioBitsPerSecond:32000};if(type)options.mimeType=type;
+      var session=new MediaRecorder(voiceStream,options);rec=session;recordedChunks=[];voiceBase=inp.value.trim();
+      var mime=(session.mimeType||type||'audio/webm').split(';')[0];
+      session.ondataavailable=function(event){if(event.data.size)recordedChunks.push(event.data);};
+      session.onstop=function(){var blob=new Blob(recordedChunks,{type:mime});rec=null;releaseMicrophone();sync();convertRecording(blob,mime);};
+      session.onerror=function(){session.onstop=null;rec=null;releaseMicrophone();sync();sayVoice('التسجيل اتوقف. جرّب تاني.','Recording stopped unexpectedly. Please try again.');};
+      session.start();f.classList.add('is-recording');moRoot.setAttribute('data-recording','true');wave.classList.add('on');
+      mic.setAttribute('aria-pressed','true');mic.setAttribute('aria-label',voiceArabic()?'إيقاف التسجيل':'Stop recording');
+      optionsTrigger.disabled=true;inp.readOnly=true;closeOptions(false);
+      sayVoice('بسجّل… اضغط لما تخلص. التسجيل حتى 20 ثانية وبيتحوّل لنص عبر Google.','Recording… press to finish. Up to 20 seconds, transcribed by Google.');
+      if(G&&!reduced)G.to(wave.children,{height:function(){return 6+Math.random()*16;},duration:.18,repeat:-1,repeatRefresh:true,yoyo:true,stagger:.04});
+      voiceTimer=setTimeout(stopRec,20000);sync();
+    }catch(error){rec=null;releaseMicrophone();sayVoice(error.name==='NotAllowedError'?'اسمح للموقع باستخدام الميكروفون من إعدادات المتصفح.':'مش قادر أفتح الميكروفون. اتأكد إنه متوصل ومتاح.',error.name==='NotAllowedError'?'Allow microphone access for this site in your browser.':'The microphone is unavailable. Check that it is connected and not in use.');}
+    finally{voiceStarting=false;mic.disabled=false;}
   });
+  inp.addEventListener('input',function(){if(!rec&&!voiceBusy)voiceNote.textContent='';});
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&rec)stopRec();});
+
   inp.addEventListener('input', sync);
   inp.addEventListener('input', function () {
     if (phase === 'idle' && !moving) P.spd = inp.value.trim() ? 1.4 : .5;
@@ -6080,6 +6370,7 @@ window.KS = function () {
   });
   f.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (rec) { stopRec(); return; }
     if (moving || phase !== 'idle') return;
     var t = inp.value.trim();
     if (!t) {
