@@ -4476,7 +4476,9 @@ window.KStory = function () {
     LB,
     cue,
     spc,
-    SH = [];
+    SH = [],
+    introLayoutReady = false,
+    introPending = null;
   var fr = function (x) {
       return x - Math.floor(x);
     },
@@ -4908,6 +4910,7 @@ window.KStory = function () {
     var started = false,
       enter = function () {
         if (started) return;
+        if (!introLayoutReady) { introPending = enter; return; }
         started = true;
         fit();
         var hh = document.documentElement;
@@ -5224,6 +5227,11 @@ window.KStory = function () {
   document.addEventListener('DOMContentLoaded', prep);
   return {
     mount: mount,
+    ready: function () {
+      if (introLayoutReady) return;
+      introLayoutReady = true;
+      if (introPending) requestAnimationFrame(function () { requestAnimationFrame(introPending); });
+    },
     k: function () {
       return on ? K : 0;
     }
@@ -5233,7 +5241,7 @@ window.KStory = function () {
 
   <script>
 addEventListener('load', function () {
-  __khBoot(function () {
+  (function () {
     (function () {
       var h = document.documentElement,
         u = function () {
@@ -5409,8 +5417,17 @@ addEventListener('load', function () {
     }, {
       passive: true
     });
+    // Start the opening word after the initial scroll layouts have finished.
+    var revealIntro = function () {
+      ScrollTrigger.removeEventListener('refresh', revealIntro);
+      if (window.KStory) KStory.ready();
+    };
+    ScrollTrigger.addEventListener('refresh', revealIntro);
     ScrollTrigger.refresh(true);
-  });
+    setTimeout(revealIntro, 1500);
+    // Published project data may arrive later; it must not hold up the opening scene.
+    (window.__khWorks || Promise.resolve()).then(function () { ScrollTrigger.refresh(true); }, function () {});
+  })();
 });
 </script>
 
