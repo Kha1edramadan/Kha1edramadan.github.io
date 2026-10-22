@@ -3497,7 +3497,7 @@ dialog::backdrop {
       <div class="ct-cols">
         <div class="ct-col"><span class="ct-k">Email</span><ul><li><a href="mailto:iamkhaledramadan@gmail.com">iamkhaledramadan@gmail.com</a></li></ul></div>
         <div class="ct-col"><span class="ct-k">Sitemap</span><ul><li><a href="#work">Work</a></li><li><a href="#feedback">Feedback</a></li></ul></div>
-        <div class="ct-col"><span class="ct-k">Social</span><ul class="ct-2"><li><a href="https://www.behance.net/kha1edRamadan" target="_blank" rel="noopener noreferrer">Behance</a></li><li><a href="https://www.linkedin.com/in/khaledramadan/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://www.instagram.com/kha1ed.ramadan/" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://www.pinterest.com/kha1edx/" target="_blank" rel="noopener noreferrer">Pinterest</a></li><li><a href="https://www.youtube.com/@kha1ed.ramadanx" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.facebook.com/KhaledxRamadan/" target="_blank" rel="noopener noreferrer">Facebook</a></li></ul></div>
+        <div class="ct-col"><span class="ct-k">Social</span><ul class="ct-2"><li><a href="https://www.behance.net/kha1edesign" target="_blank" rel="noopener noreferrer">Behance</a></li><li><a href="https://www.linkedin.com/in/khaledramadan/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://www.instagram.com/kha1edesign/" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://www.pinterest.com/kha1edesign/" target="_blank" rel="noopener noreferrer">Pinterest</a></li><li><a href="https://www.youtube.com/@kha1edesign" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.facebook.com/kha1edesign/" target="_blank" rel="noopener noreferrer">Facebook</a></li></ul></div>
       </div>
       <div class="ct-foot"><p class="copyright">&copy; <span data-current-year>2026</span> Khaled Ramadan.</p><a href="#hero">Back to top ↑</a></div>
     </section>
@@ -3554,6 +3554,23 @@ const SoundEngine = {
 };
 const PROJECTS_DATA = [];
 
+const __khCaseFonts = {"inter":{"name":"Inter","family":"'Inter','Cairo',sans-serif","min":100,"max":900},"archivo":{"name":"Archivo","family":"'Archivo','Cairo',sans-serif","min":100,"max":900},"cairo":{"name":"Cairo","family":"'Cairo',sans-serif","min":200,"max":1000},"instrument-serif":{"name":"Instrument Serif","family":"'Instrument Serif','Cairo',serif","min":400,"max":400},"jetbrains-mono":{"name":"JetBrains Mono","family":"'JetBrains Mono','Cairo',monospace","min":100,"max":800},"anton":{"name":"Anton","family":"'Anton','Cairo',sans-serif","min":400,"max":400}};
+function __khCaseStyle(value) {
+  const font = __khCaseFonts[value?.font];
+  if (!font) return '';
+  const selected = Number(value.weight);
+  const weight = Number.isInteger(selected) && selected >= font.min && selected <= font.max ? selected : 400;
+  const id = 'kh-case-font-' + value.font;
+  if (!document.getElementById(id)) {
+    const link = document.createElement('link');
+    link.id = id; link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(font.name) + (font.min === font.max ? '' : ':wght@' + font.min + '..' + font.max) + '&display=swap';
+    document.head.appendChild(link);
+  }
+  return ' style="font-family:' + font.family + ';font-weight:' + weight + ';font-synthesis:none"';
+}
+
+
 /* ---- Sanity CMS hookup ----
    Paste the Project ID from the Sanity studio below. Leave it empty to use the PROJECTS_DATA above as-is.
    Only published Sanity content is shown. Empty or failed responses never restore unpublished projects. */
@@ -3600,7 +3617,7 @@ const __khBoot = fn => {
   if (!SANITY.projectId) return;
   // Only currently published projects are shown; never restore unpublished content from local storage.
   const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,"crop":image.crop,"hotspot":image.hotspot,"dimensions":image.asset->metadata.dimensions,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
-  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
+  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
   const focus = (hotspot, crop) => {
     if (!hotspot || !Number.isFinite(hotspot.x) || !Number.isFinite(hotspot.y)) return '';
     const c = crop || {}, width = 1 - (c.left || 0) - (c.right || 0), height = 1 - (c.top || 0) - (c.bottom || 0);
@@ -3668,12 +3685,15 @@ const __khBoot = fn => {
           type: 'text',
           label: b.label,
           heading: b.heading,
+          headingTypography: b.headingTypography,
+          bodyTypography: b.bodyTypography,
           body: b.body
         };
       case 'quote':
         return {
           type: 'quote',
           text: b.text,
+          textTypography: b.textTypography,
           by: b.by
         };
       case 'palette':
@@ -3964,9 +3984,9 @@ __khBoot(() => {
       case 'spacer':
         return '<div class="cs-sp"></div>';
       case 'text':
-        return `<div class="cs-text"><div>${b.label ? `<p class="cs-lbl">${csEsc(b.label)}</p>` : ''}${b.heading ? `<h3 dir="auto">${csEsc(b.heading)}</h3>` : ''}</div><p dir="auto">${csEsc(b.body)}</p></div>`;
+        return `<div class="cs-text"><div>${b.label ? `<p class="cs-lbl">${csEsc(b.label)}</p>` : ''}${b.heading ? `<h3 dir="auto"${__khCaseStyle(b.headingTypography)}>${csEsc(b.heading)}</h3>` : ''}</div><p dir="auto"${__khCaseStyle(b.bodyTypography)}>${csEsc(b.body)}</p></div>`;
       case 'quote':
-        return `<blockquote class="cs-quote"><p dir="auto">${csEsc(b.text)}</p>${b.by ? `<cite>${csEsc(b.by)}</cite>` : ''}</blockquote>`;
+        return `<blockquote class="cs-quote"><p dir="auto"${__khCaseStyle(b.textTypography)}>${csEsc(b.text)}</p>${b.by ? `<cite>${csEsc(b.by)}</cite>` : ''}</blockquote>`;
       case 'palette':
         return '';
       /* Palette presentation is temporarily disabled; uploaded artwork remains unchanged. */
@@ -4530,9 +4550,10 @@ window.KStory = function () {
     txt: 'CRAFTINGMEANINGFULBRANDS',
     uniq: ''
   };
-  function htInit() {
+  async function htInit() {
+    if (HT.ready || HT.preparing || !img || !img.naturalWidth) return;
+    HT.preparing = true;
     try {
-      if (HT.ready || !img || !img.naturalWidth) return;
       var W = img.naturalWidth,
         H = img.naturalHeight,
         N = HT.N,
@@ -4562,7 +4583,13 @@ window.KStory = function () {
       HT.uniq = HT.txt.split('').filter(function (c, q, arr) {
         return arr.indexOf(c) === q;
       }).join('');
-      for (j = 0; j < rows; j++) for (i = 0; i < N; i++) {
+      var sliceStart = performance.now();
+      for (j = 0; j < rows; j++) {
+        if (performance.now() - sliceStart > 6) {
+          await new Promise(function (resolve) { setTimeout(resolve, 0); });
+          sliceStart = performance.now();
+        }
+        for (i = 0; i < N; i++) {
         sum = 0;
         for (yy = 0; yy < S; yy++) for (xx = 0; xx < S; xx++) {
           k = ((j * S + yy) * m.width + i * S + xx) * 4;
@@ -4578,6 +4605,7 @@ window.KStory = function () {
           dist = Math.min(1, Math.sqrt(dx * dx + dy * dy) / .75);
         dl[j * N + i] = .62 * dist + .38 * hs(i, j);
         li[j * N + i] = HT.uniq.indexOf(HT.txt.charAt((j * N + i) % HT.txt.length));
+      }
       }
       var gs = HT.gs,
         at = document.createElement('canvas');
@@ -4606,6 +4634,8 @@ window.KStory = function () {
       setPix();
     } catch (e) {
       HT.ready = false;
+    } finally {
+      HT.preparing = false;
     }
   }
   function draw(p) {
@@ -4649,6 +4679,11 @@ window.KStory = function () {
   }
   function setPix() {
     var p = px.p;
+    if (p <= 0) {
+      img.style.opacity = 0;
+      cv.style.opacity = 0;
+      return;
+    }
     if (!HT.ready) {
       img.style.opacity = p >= .02 ? 1 : 0;
       cv.style.opacity = 0;
@@ -4709,6 +4744,7 @@ window.KStory = function () {
     fw.style.top = yb - (bl(ln) - wr.top) + 'px';
     hero.style.setProperty('--fy', yb + H * .06 + 'px');
   }
+  var lastFitKey = '';
   function fit() {
     if (!on) return;
     var cs = getComputedStyle(world.querySelector('.st-a')),
@@ -4729,11 +4765,20 @@ window.KStory = function () {
       tbot = tb0 ? tb0.getBoundingClientRect().bottom - wr0.top : 0,
       Hh = world.clientHeight,
       capH = Math.max(60, (Hh - Math.max(18, Math.min(Hh * .045, 40)) - (tbot + bd0 * 1.6) - bd0 * 1.6) / 1.55);
+    // Refresh events often repeat without a size or font change. Avoid re-sizing every letter each time.
+    var fitKey = [avail, world.clientHeight, innerWidth, innerHeight, room, capH, subW,
+      document.fonts && document.fonts.check('900 100px Archivo'),
+      document.fonts && document.fonts.check('500 16px Inter')].join('|');
+    if (fitKey === lastFitKey) return;
+    lastFitKey = fitKey;
+    // Reset all measurement styles together before reading any line widths.
     ls.forEach(function (ln) {
       ln.style.fontSize = '100px';
       ln.style.marginLeft = '';
       ln.style.marginRight = '';
       ln._b = null;
+    });
+    ls.forEach(function (ln) {
       var w = ln.offsetWidth;
       if (!w) {
         ln._S = 0;
@@ -4940,7 +4985,7 @@ window.KStory = function () {
         fit();
         htInit();
         setPix();
-        ScrollTrigger.refresh();
+        ScrollTrigger.refresh(true);
       });
     };
     if (img.complete && img.naturalWidth) go();else img.addEventListener('load', go);
@@ -5364,7 +5409,7 @@ addEventListener('load', function () {
     }, {
       passive: true
     });
-    ScrollTrigger.refresh();
+    ScrollTrigger.refresh(true);
   });
 });
 </script>
@@ -5419,10 +5464,9 @@ window.KS = function () {
   function label() {
     var t = document.getElementById('sound-toggle');
     if (t) {
-      var active = on && AC && AC.state === 'running';
-      t.textContent = active ? 'Sound: On' : on ? 'Enable sound' : 'Sound: Off';
-      t.setAttribute('aria-pressed', active ? 'true' : 'false');
-      t.title = active ? 'Turn sound off' : 'Enable sound for this visit';
+      t.textContent = 'Sound: ' + (on ? 'On' : 'Off');
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      t.title = on ? 'Turn sound off' : 'Turn sound on';
     }
   }
 
