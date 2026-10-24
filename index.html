@@ -3052,13 +3052,46 @@ html.st-wait .st-h>* {
 .cs-action-label { display:block; min-width:0; overflow-wrap:anywhere; text-align:center; }
 .cs-project-actions .cs-project-links { flex:1; min-width:0; }
 .cs-project-actions .cs-sharing { margin-inline-start:auto; }
-.cs-project-actions .cs-share { background:var(--text-color); color:var(--bg-color); border-color:var(--text-color); }
-.cs-project-actions .cs-share:hover:not(:disabled) { background:var(--bg-color); color:var(--text-color); }
+.cs-project-actions .cs-share { background:transparent; color:var(--text-color); border-color:var(--border-color); }
+.cs-project-actions .cs-share:is(:hover,:focus-visible):not(:disabled) { background:var(--text-color); color:var(--bg-color); border-color:var(--text-color); }
 @media(max-width:560px) { .cs-project-actions,.cs-project-links { gap:10px; } .cs-project-actions .cs-project-links { flex:0 0 100%; } .cs-project-actions .cs-sharing { margin-inline-start:0; } .cs-project-actions .cs-project-links a,.cs-project-actions .cs-share { padding:12px 16px; } }
 
-.cs-project-actions .cs-project-links a[data-brand-color]:is(:hover,:focus-visible) { border-color:var(--brand-color); background:var(--bg-color); color:var(--text-color); }
-.cs-project-actions .cs-project-links a[data-brand-color]:is(:hover,:focus-visible) .cs-action-icon { color:var(--brand-color); }
-@media(prefers-reduced-motion:no-preference) { .cs-project-actions .cs-project-links a { transition:border-color .12s ease,color .12s ease,background-color .12s ease; } }
+.cs-project-extras[data-layout="grouped"] .cs-project-links,.cs-project-extras[data-layout="centered"] .cs-project-links { flex:0 1 auto; }
+.cs-project-extras[data-layout="grouped"] .cs-sharing,.cs-project-extras[data-layout="centered"] .cs-sharing { margin-inline-start:0; }
+.cs-project-extras[data-layout="centered"] :is(.cs-keywords,.cs-project-actions,.cs-project-links) { justify-content:center; }
+@media(max-width:560px) { .cs-project-extras[data-layout] .cs-project-links { flex:0 0 100%; } }
+/* Five controlled compositions, sharing one spacing and type system. */
+.cs-project-extras[data-layout="split"] { flex-direction:row; align-items:center; flex-wrap:wrap; }
+.cs-project-extras[data-layout="split"] .cs-keywords { flex:1 1 260px; }
+.cs-project-extras[data-layout="split"] .cs-project-actions { width:auto; flex:1 1 300px; justify-content:flex-end; }
+.cs-project-extras[data-layout="split"] .cs-project-links { flex:0 1 auto; }
+.cs-project-extras[data-layout="split"] .cs-sharing { margin-inline-start:0; }
+.cs-project-extras[data-layout="stacked"] .cs-project-actions { flex-direction:column; align-items:flex-start; }
+.cs-project-extras[data-layout="stacked"] .cs-project-links { flex:0 1 auto; }
+.cs-project-extras[data-layout="stacked"] .cs-sharing { margin-inline-start:0; }
+.cs-action-content { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-width:0; }
+.cs-project-actions :is(a,button) { overflow:hidden; }
+/* Brand fills stay vivid; monochrome is independently selectable per project. */
+.cs-project-extras[data-platform-style="brand"] .cs-project-links a[data-brand-color]:is(:hover,:focus-visible) { border-color:var(--brand-color); background:var(--brand-color); color:var(--brand-ink,#fff); }
+.cs-project-links a:is([data-brand="deviantart"],[data-brand="dribbble"],[data-brand="figma"],[data-brand="soundcloud"],[data-brand="spotify"],[data-brand="whatsapp"],[data-brand="artstation"]) { --brand-ink:#080808; }
+.cs-project-extras[data-platform-style="brand"] .cs-project-links a[data-brand="instagram"]:is(:hover,:focus-visible) { border-color:#e1306c; background:linear-gradient(120deg,#833ab4 0%,#c13584 35%,#e1306c 65%,#f77737 100%); color:#fff; }
+.cs-project-links a[data-brand="instagram"] .cs-action-label { text-shadow:0 1px 3px rgba(0,0,0,.8); }
+.cs-project-extras[data-platform-style="monochrome"] .cs-project-links a:is(:hover,:focus-visible) { border-color:var(--text-color); background:var(--text-color); color:var(--bg-color); }
+.cs-project-extras[data-platform-style="monochrome"] .cs-action-label { text-shadow:none; }
+@media(max-width:560px) {
+ .cs-project-extras[data-layout="split"] { flex-direction:column; align-items:stretch; }
+ .cs-project-extras[data-layout="split"] :is(.cs-keywords,.cs-project-actions) { flex:0 1 auto; width:100%; justify-content:flex-start; }
+ .cs-project-extras[data-layout="stacked"] .cs-project-links { flex:0 1 auto; }
+}
+@media(prefers-reduced-motion:no-preference) {
+ .cs-project-actions :is(a,button) { transition:border-color .18s ease,color .18s ease,background-color .18s ease; }
+ .cs-project-extras[data-motion="roll"] .cs-project-actions :is(a,button):is(:hover,:focus-visible) .cs-action-content { animation:cs-action-roll .42s cubic-bezier(.22,1,.36,1) both; }
+ .cs-project-extras[data-motion="lift"] .cs-action-content { transition:transform .25s cubic-bezier(.22,1,.36,1); }
+ .cs-project-extras[data-motion="lift"] .cs-project-actions :is(a,button):is(:hover,:focus-visible) .cs-action-content { transform:translateY(-3px); }
+ .cs-project-extras[data-motion="pulse"] .cs-project-actions :is(a,button):is(:hover,:focus-visible) .cs-action-content { animation:cs-action-pulse .4s ease-out both; }
+ @keyframes cs-action-pulse { 0%,100% {transform:scale(1)} 45% {transform:scale(1.07)} }
+ @keyframes cs-action-roll { 0% {transform:translateY(0);opacity:1} 40% {transform:translateY(-130%);opacity:0} 41% {transform:translateY(130%);opacity:0} 100% {transform:translateY(0);opacity:1} }
+}
 #close-project-dialog:focus:not(:focus-visible) {
   outline: none;
 }
@@ -3678,7 +3711,7 @@ const __khBoot = fn => {
   if (!SANITY.projectId) return;
   // Only currently published projects are shown; never restore unpublished content from local storage.
   const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,alt,"crop":image.crop,"hotspot":image.hotspot,"dimensions":image.asset->metadata.dimensions,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
-  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,showShare,showTags,tags,showLinks,projectLinks[]{label,url},aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
+  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,footerLayout,platformStyle,footerMotion,showShare,showTags,tags,showLinks,projectLinks[]{label,url},aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
   const focus = (hotspot, crop) => {
     if (!hotspot || !Number.isFinite(hotspot.x) || !Number.isFinite(hotspot.y)) return '';
     const c = crop || {}, width = 1 - (c.left || 0) - (c.right || 0), height = 1 - (c.top || 0) - (c.bottom || 0);
@@ -3797,6 +3830,9 @@ const __khBoot = fn => {
     location: p.location,
     services: p.services || [],
     overview: p.overview,
+    footerLayout: p.footerLayout,
+    platformStyle: p.platformStyle,
+    footerMotion: p.footerMotion,
     showShare: p.showShare === true,
     showTags: p.showTags === true,
     tags: p.tags,
@@ -4087,7 +4123,7 @@ __khBoot(() => {
     }).filter(Boolean).slice(0, 4) : [];
     const share = p.showShare === true && shareUrl;
     if (!tags.length && !links.length && !share) return '';
-    return `<section class="cs-project-extras" aria-label="Project details">${tags.length ? `<ul class="cs-keywords" aria-label="Project keywords">${tags.map(tag => `<li class="cs-keyword" dir="auto">${csEsc(tag)}</li>`).join('')}</ul>` : ''}${links.length || share ? `<div class="cs-project-actions">${links.length ? `<div class="cs-project-links">${links.map(link => `<a href="${csEsc(link.url)}" target="_blank" rel="noopener noreferrer" data-brand="${link.platform}"${csBrandIcons[link.platform].c ? ` data-brand-color style="--brand-color:#${csBrandIcons[link.platform].c}"` : ''}>${csIcon(link.url)}<span class="cs-action-label" dir="auto">${csEsc(link.label)}</span></a>`).join('')}</div>` : ''}${share ? `<div class="cs-sharing"><button type="button" class="cs-share" ${preview ? 'disabled title="Available after publishing"' : `data-share-url="${csEsc(shareUrl)}"`}>${csIcon('', 'share-nodes')}<span class="cs-action-label">Share</span></button><span class="sr-only" id="cs-share-status" role="status"></span></div>` : ''}</div>` : ''}</section>`;
+    return `<section class="cs-project-extras" data-layout="${["balanced","grouped","centered","split","stacked"].includes(p.footerLayout) ? p.footerLayout : "balanced"}" data-platform-style="${p.platformStyle === "monochrome" ? "monochrome" : "brand"}" data-motion="${["roll","lift","pulse","none"].includes(p.footerMotion) ? p.footerMotion : "roll"}" aria-label="Project details">${tags.length ? `<ul class="cs-keywords" aria-label="Project keywords">${tags.map(tag => `<li class="cs-keyword" dir="auto">${csEsc(tag)}</li>`).join('')}</ul>` : ''}${links.length || share ? `<div class="cs-project-actions">${links.length ? `<div class="cs-project-links">${links.map(link => `<a href="${csEsc(link.url)}" target="_blank" rel="noopener noreferrer" data-brand="${link.platform}"${csBrandIcons[link.platform].c ? ` data-brand-color style="--brand-color:#${csBrandIcons[link.platform].c}"` : ''}><span class="cs-action-content">${csIcon(link.url)}<span class="cs-action-label" dir="auto">${csEsc(link.label)}</span></span></a>`).join('')}</div>` : ''}${share ? `<div class="cs-sharing"><button type="button" class="cs-share" ${preview ? 'disabled title="Available after publishing"' : `data-share-url="${csEsc(shareUrl)}"`}><span class="cs-action-content">${csIcon('', 'share-nodes')}<span class="cs-action-label">Share</span></span></button><span class="sr-only" id="cs-share-status" role="status"></span></div>` : ''}</div>` : ''}</section>`;
   };
   const csOpen = id => {
     const p = PROJECTS_DATA.find(x => x.id === id) || (__khWorkItems(PROJECTS_DATA).some(x => x.id === id && x.placeholder) ? {
