@@ -1926,21 +1926,19 @@ html.hero-view .site-nav {
 .work-project-link { padding:0; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; }
 .work-project-link:focus-visible { outline:2px solid currentColor; outline-offset:-6px; }
 .work-card:focus-within .view-project-hint { opacity:.95; }
-.cs-project-extras { display:flex; flex-wrap:wrap; align-items:flex-start; gap:32px 64px; margin:48px 0; }
+.cs-project-extras { display:flex; flex-wrap:wrap; align-items:flex-start; gap:28px 48px; margin:48px 0; }
 .cs-project-extras>div { min-width:0; max-width:100%; }
 .cs-project-extras .cs-lbl { margin:0 0 14px; }
 .cs-keywords { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none; max-width:640px; }
-.cs-keyword { padding:6px 10px; background:var(--border-color); font-size:.75rem; line-height:1.5; overflow-wrap:anywhere; }
+.cs-keyword { padding:7px 13px; border:1px solid var(--border-color); border-radius:99px; background:var(--bg-color); color:var(--text-color); font-size:.75rem; font-weight:500; line-height:1.5; overflow-wrap:anywhere; }
 .cs-project-links { display:flex; flex-wrap:wrap; gap:8px 24px; }
 .cs-project-links a { display:inline-flex; align-items:center; min-height:44px; font-size:.85rem; text-decoration:underline; text-underline-offset:5px; overflow-wrap:anywhere; max-width:100%; }
-.cs-sharing { margin-inline-start:auto; }
-.cs-share { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:12px 20px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
-.cs-share:hover:not(:disabled) { background:var(--border-color); }
+.cs-sharing { margin-inline-start:auto; align-self:flex-end; }
 .cs-share:disabled { opacity:.55; cursor:default; }
 .project-dialog-header>div:first-child { min-width:0; }
 .project-dialog-header .dialog-title { overflow-wrap:anywhere; }
 .cs-share[hidden] { display:none; }
-@media(max-width:560px) { .project-dialog-header { gap:12px; } .cs-project-extras { flex-direction:column; gap:28px; margin:32px 0; } .cs-sharing { margin-inline-start:0; } }
+@media(max-width:560px) { .project-dialog-header { gap:12px; } .cs-project-extras { flex-direction:column; gap:28px; margin:32px 0; } .cs-sharing { margin-inline-start:0; align-self:flex-start; } }
 .cs-share-link { display:block; width:min(100%,520px); margin:8px 0 16px; padding:12px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
 .cs-share:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
 @media (hover:none) { .view-project-hint { top:auto; bottom:4rem; opacity:.95; transform:translateX(-50%); } }
@@ -3015,7 +3013,7 @@ html.st-wait .st-h>* {
 #project-dialog #project-slides-container:focus-visible {
   outline: none;
 }
-#close-project-dialog {
+#close-project-dialog, .cs-share {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3033,7 +3031,7 @@ html.st-wait .st-h>* {
   letter-spacing: .08em;
   transition: none;
 }
-#close-project-dialog:hover {
+#close-project-dialog:hover, .cs-share:hover:not(:disabled) {
   background: var(--text-color);
   color: var(--bg-color);
 }
@@ -4060,7 +4058,7 @@ __khBoot(() => {
     }).filter(Boolean).slice(0, 4) : [];
     const share = p.showShare === true && shareUrl;
     if (!tags.length && !links.length && !share) return '';
-    return `<section class="cs-project-extras" aria-label="Project details">${tags.length ? `<div><p class="cs-lbl">Keywords</p><ul class="cs-keywords" aria-label="Project keywords">${tags.map(tag => `<li class="cs-keyword" dir="auto">${csEsc(tag)}</li>`).join('')}</ul></div>` : ''}${links.length ? `<div><p class="cs-lbl">Elsewhere</p><div class="cs-project-links">${links.map(link => `<a href="${csEsc(link.url)}" target="_blank" rel="noopener noreferrer" dir="auto">${csEsc(link.label)}</a>`).join('')}</div></div>` : ''}${share ? `<div class="cs-sharing"><p class="cs-lbl">Share this project</p><button type="button" class="cs-share" ${preview ? 'disabled title="Available after publishing"' : `data-share-url="${csEsc(shareUrl)}"`}>Share project</button><span class="sr-only" id="cs-share-status" role="status"></span></div>` : ''}</section>`;
+    return `<section class="cs-project-extras" aria-label="Project details">${tags.length ? `<div><p class="cs-lbl">Keywords</p><ul class="cs-keywords" aria-label="Project keywords">${tags.map(tag => `<li class="cs-keyword" dir="auto">${csEsc(tag)}</li>`).join('')}</ul></div>` : ''}${links.length ? `<div><p class="cs-lbl">Elsewhere</p><div class="cs-project-links">${links.map(link => `<a href="${csEsc(link.url)}" target="_blank" rel="noopener noreferrer" dir="auto">${csEsc(link.label)}</a>`).join('')}</div></div>` : ''}${share ? `<div class="cs-sharing"><button type="button" class="cs-share" ${preview ? 'disabled title="Available after publishing"' : `data-share-url="${csEsc(shareUrl)}"`}>Share</button><span class="sr-only" id="cs-share-status" role="status"></span></div>` : ''}</section>`;
   };
   const csOpen = id => {
     const p = PROJECTS_DATA.find(x => x.id === id) || (__khWorkItems(PROJECTS_DATA).some(x => x.id === id && x.placeholder) ? {
