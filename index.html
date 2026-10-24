@@ -17,6 +17,13 @@
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Khaled Ramadan — Brand Designer</title>
+  <meta name="description" content="Khaled Ramadan is a brand designer based in Mansoura, Egypt. Explore logo design, visual identities and selected branding projects.">
+  <link rel="canonical" href="https://khaledesign.online/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Khaled Ramadan — Brand Designer">
+  <meta property="og:description" content="Logo design, visual identities and selected branding projects by Khaled Ramadan, based in Mansoura, Egypt.">
+  <meta property="og:url" content="https://khaledesign.online/">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Khaled Ramadan","jobTitle":"Brand Designer","url":"https://khaledesign.online/","address":{"@type":"PostalAddress","addressLocality":"Mansoura","addressCountry":"EG"},"sameAs":["https://www.behance.net/kha1edesign","https://www.instagram.com/kha1edesign/","https://www.facebook.com/kha1edesign/","https://www.pinterest.com/kha1edesign/","https://www.youtube.com/@kha1edesign"]}</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -822,7 +829,7 @@ dialog {
 }
 .ct-title i {
   font-style: normal;
-  color: #ff4444;
+  color: currentColor;
 }
 .ct-w {
   display: inline-block;
@@ -1884,9 +1891,9 @@ html.hero-view .site-nav {
 }
 .cs-ov {
   margin: 0;
-  font-size: clamp(1.05rem,1.6vw,1.45rem);
-  line-height: 1.45;
-  font-weight: 500;
+  font-size: clamp(1rem,1.25vw,1.2rem);
+  line-height: 1.6;
+  font-weight: 400;
   letter-spacing: -.01em;
   text-wrap: pretty;
 }
@@ -1903,7 +1910,7 @@ html.hero-view .site-nav {
 }
 .cs-fig>.cs-m {
   background: var(--card-bg);
-  border: 1px solid var(--placeholder-border);
+  border: 0;
   overflow: hidden;
   display: block;
   border-radius: var(--cs-r,14px);
@@ -1915,6 +1922,17 @@ html.hero-view .site-nav {
 #project-dialog .cs-blocks,#project-dialog .cs-row,#project-dialog .cs-bento {
   gap: var(--cs-gap);
 }
+.cs-placeholder>.cs-m { border: 1px solid var(--placeholder-border); }
+.work-project-link { padding:0; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; }
+.work-project-link:focus-visible { outline:2px solid currentColor; outline-offset:-6px; }
+.work-card:focus-within .view-project-hint { opacity:.95; }
+.cs-share { display:inline-flex; align-items:center; min-height:44px; margin:0; font-size:.75rem; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+.cs-actions { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+.cs-share[hidden] { display:none; }
+@media(max-width:560px) { .cs-actions { flex-direction:column-reverse; align-items:flex-end; gap:4px; } }
+.cs-share-link { display:block; width:min(100%,520px); margin:8px 0 16px; padding:12px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
+.cs-share:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
+@media (hover:none) { .view-project-hint { top:auto; bottom:4rem; opacity:.95; transform:translateX(-50%); } }
 .cs-fig.fit>.cs-m {
   aspect-ratio: var(--ar,16/9);
 }
@@ -2496,6 +2514,8 @@ html.st-intro .nav-veil,html.hero-view .nav-veil {
   mask: radial-gradient(closest-side,#000,transparent);
   pointer-events: none;
 }
+/* Keep the decorative dot field inside the mobile page gutters. */
+@media (max-width:480px) { .ht-root::before { inset-inline: -16px; } }
 .ht-orb {
   position: absolute;
   left: calc(var(--W)/2 - 110px);
@@ -3203,8 +3223,8 @@ dialog::backdrop {
 }
 
 /* Animate the original punctuation itself so its baseline stays intact. */
-.ct-title i { display: inline-block; animation: contact-dot-breathe 3.8s ease-in-out infinite; }
-@keyframes contact-dot-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+.ct-title i { display: inline-block; transform-origin: 50% 85%; animation: contact-dot-breathe 4.8s ease-in-out infinite; }
+@keyframes contact-dot-breathe { 0%, 75%, 100% { opacity: 1; transform: scale(1); } 86% { opacity: .65; transform: scale(.84); } }
 .chat-options-trigger { transition: background .18s ease, transform .18s ease; }
 .chat-options-trigger:active { transform: scale(.94); }
 .chat-options-trigger[aria-expanded="true"] { background: rgba(127,127,127,.12); }
@@ -3451,7 +3471,7 @@ dialog::backdrop {
 
     <!-- CONTACT SECTION (القسم المُعدّل بـ Layout وهيراكركي سليم بدون سهم أو نقطة) -->
     <section id="contact" class="contact-section">
-      <div class="ct-top"><span class="ct-k">Cairo <span id="ct-time">--:--</span></span></div>
+      <div class="ct-top"><span class="ct-k">Mansoura <span id="ct-time">--:--</span></span></div>
       <h2 class="ct-title"><span class="ct-w"><span>LET'S TALK<i aria-hidden="true">.</i></span></span></h2>
       <div class="ct-main">
         <div class="ask"><span class="ct-k">Khaled’s Assistant</span>
@@ -3601,6 +3621,18 @@ const __khEmbed = v => {
     return '';
   }
 };
+function __khWorkItems(projects) {
+  const used = new Set(projects.map(p => p.id));
+  return projects.concat(Array.from({length: Math.max(0, 6 - projects.length)}, (_, i) => {
+    let id = 'empty-case-' + (projects.length + i);
+    while (used.has(id)) id += '-empty';
+    used.add(id);
+    return {id, placeholder: true, title: '', coverImage: '', aspectRatio: '3 / 4'};
+  }));
+}
+function __khProjectUrl(id, base = location.href) {
+  const url = new URL(base); url.search = ''; url.hash = ''; url.searchParams.set('project', id); return url.href;
+}
 const __khBoot = fn => {
   const run = () => {
     let d = false;
@@ -3616,7 +3648,7 @@ const __khBoot = fn => {
 (() => {
   if (!SANITY.projectId) return;
   // Only currently published projects are shown; never restore unpublished content from local storage.
-  const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,"crop":image.crop,"hotspot":image.hotspot,"dimensions":image.asset->metadata.dimensions,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
+  const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,alt,"crop":image.crop,"hotspot":image.hotspot,"dimensions":image.asset->metadata.dimensions,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
   const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
   const focus = (hotspot, crop) => {
     if (!hotspot || !Number.isFinite(hotspot.x) || !Number.isFinite(hotspot.y)) return '';
@@ -3647,6 +3679,7 @@ const __khBoot = fn => {
   const mi = x => x && x.src ? {
     src: img(x.src, 2000, x.crop, x.dimensions),
     caption: x.caption || '',
+    alt: x.alt,
     focus: focus(x.hotspot, x.crop) || x.focus || ''
   } : null;
   const blk = b => {
@@ -3903,21 +3936,26 @@ __khBoot(() => {
   const workIndex = document.getElementById('work-index');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (galleryContainer) {
-    const workItems = PROJECTS_DATA.length ? PROJECTS_DATA : Array.from({
-      length: 6
-    }, (_, i) => ({
-      id: 'empty-case-' + i,
-      title: '',
-      coverImage: '',
-      aspectRatio: '3 / 4'
-    }));
+    const workItems = __khWorkItems(PROJECTS_DATA);
     galleryContainer.innerHTML = workItems.map(project => {
       const coverHtml = project.coverImage ? `<img src="${__khEsc(project.coverImage)}" alt="${__khEsc(project.title)}" loading="lazy" style="object-position:${__khEsc(project.coverFocus || '50% 50%')}">` : `<div class="work-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
-      return `<article class="work-card" data-project-id="${__khEsc(project.id)}" style="--card-aspect: ${__khEsc(project.aspectRatio)}"><span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div></article>`;
+      const real = PROJECTS_DATA.some(p => p.id === project.id);
+      return `<article class="work-card" data-project-id="${__khEsc(project.id)}" style="--card-aspect: ${__khEsc(project.aspectRatio)}">${real ? '<a class="work-project-link" href="' + __khEsc(__khProjectUrl(project.id)) + '" aria-label="View ' + __khEsc(project.title) + ' case study">' : '<button type="button" class="work-project-link" aria-label="Preview empty case study">'}<span class="view-project-hint">View Case</span><div class="work-cover">${coverHtml}</div>${real ? '</a>' : '</button>'}</article>`;
+
     }).join('');
   }
-  if (workIndex) workIndex.textContent = `${PROJECTS_DATA.length ? '01' : '00'} / ${String(PROJECTS_DATA.length).padStart(2, '0')}`;
+  if (workIndex) workIndex.textContent = `01 / ${String(Math.max(6, PROJECTS_DATA.length)).padStart(2, '0')}`;
   const workCards = Array.from(document.querySelectorAll('.work-card'));
+  let workIndexFrame = 0;
+  galleryContainer?.addEventListener('scroll', () => {
+    if (workIndexFrame) return;
+    workIndexFrame = requestAnimationFrame(() => {
+      workIndexFrame = 0;
+      const width = workCards[0]?.offsetWidth || 1;
+      const index = Math.min(workCards.length - 1, Math.round(galleryContainer.scrollLeft / width));
+      if (workIndex) workIndex.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(workCards.length).padStart(2, '0');
+    });
+  }, {passive: true});
 
   /* ---- case study renderer ----
      Project fields (all optional except id/title): client, role, location, services:[], overview,
@@ -3995,7 +4033,7 @@ __khBoot(() => {
     }
   };
   const csOpen = id => {
-    const p = PROJECTS_DATA.find(x => x.id === id) || (PROJECTS_DATA.length === 0 && /^empty-case-[0-5]$/.test(id) ? {
+    const p = PROJECTS_DATA.find(x => x.id === id) || (__khWorkItems(PROJECTS_DATA).some(x => x.id === id && x.placeholder) ? {
       id,
       title: 'Case Study',
       category: 'Brand Identity',
@@ -4012,6 +4050,8 @@ __khBoot(() => {
       }]
     } : null);
     if (!p) return;
+    const real = PROJECTS_DATA.includes(p);
+    const shareUrl = real ? __khProjectUrl(p.id) : '';
     const idx = PROJECTS_DATA.indexOf(p),
       prev = PROJECTS_DATA[idx - 1],
       nxt = PROJECTS_DATA[idx + 1];
@@ -4026,7 +4066,15 @@ __khBoot(() => {
     const body = blocks.map(csBlock).join('');
     const header = document.querySelector('.project-dialog-header');
     header.remove();
-    document.getElementById('project-slides-container').innerHTML = `<div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
+    let actions = header.querySelector('.cs-actions');
+    if (!actions) {
+      actions = document.createElement('div'); actions.className = 'cs-actions';
+      const close = header.querySelector('#close-project-dialog'); close.before(actions); actions.append(close);
+      const share = document.createElement('button'); share.type = 'button'; share.className = 'cs-share'; actions.prepend(share);
+    }
+    const shareButton = actions.querySelector('.cs-share');
+    shareButton.textContent = 'Share project ↗'; shareButton.dataset.shareUrl = shareUrl; shareButton.hidden = !real;
+    document.getElementById('project-slides-container').innerHTML = `<span class="sr-only" id="cs-share-status" role="status"></span><div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
     const content = document.getElementById('project-slides-container');
     content.prepend(header);
     if (!meta.length && !p.overview) content.querySelector('.cs-intro')?.remove();
@@ -4047,6 +4095,8 @@ __khBoot(() => {
     /* The case-study header scrolls with its presentation; no progress overlay. */
   })();
   document.getElementById('project-slides-container').addEventListener('click', e => {
+    const share = e.target.closest('[data-share-url]');
+    if (share) { shareProject(share); return; }
     const t = e.target.closest('[data-cs]');
     if (!t) return;
     if (t.dataset.cs === 'close') document.getElementById('project-dialog').close();else {
@@ -4054,18 +4104,32 @@ __khBoot(() => {
         SoundEngine.click();
       } catch (_) {}
       csOpen(t.dataset.id);
+      history.replaceState(null, '', __khProjectUrl(t.dataset.id));
     }
   });
+  async function shareProject(button) {
+    const data = {title: document.getElementById('project-dialog-title').textContent + ' — Khaled Ramadan', url: button.dataset.shareUrl};
+    const status = document.getElementById('cs-share-status');
+    try {
+      if (navigator.share) await navigator.share(data);
+      else { await navigator.clipboard.writeText(data.url); button.textContent = 'Link copied ✓'; if(status)status.textContent = 'Project link copied.'; }
+    } catch(error) { if(error.name !== 'AbortError') { button.textContent = 'Project link';
+        let field = document.getElementById('cs-share-link');
+        if (!field) { field = document.createElement('input'); field.className = 'cs-share-link'; field.id = 'cs-share-link'; field.readOnly = true; field.setAttribute('aria-label', 'Project link'); document.querySelector('.project-dialog-header').after(field); }
+        field.value = data.url; field.focus(); field.select();
+        if(status)status.textContent = 'Project link selected. Copy it to share.'; } }
+  }
   const projectDialog = document.getElementById('project-dialog');
   const closeProjectDialog = document.getElementById('close-project-dialog');
   galleryContainer.addEventListener('click', e => {
     const card = e.target.closest('.work-card');
-    if (card && projectDialog && (PROJECTS_DATA.length === 0 || PROJECTS_DATA.some(p => p.id === card.dataset.projectId))) {
+    if (card && projectDialog) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
       SoundEngine.open();
-      const project = PROJECTS_DATA.find(p => p.id === card.dataset.projectId) || (PROJECTS_DATA.length === 0 ? {
-        id: card.dataset.projectId
-      } : null);
+      const project = __khWorkItems(PROJECTS_DATA).find(p => p.id === card.dataset.projectId);
       if (project) csOpen(project.id);
+      if (PROJECTS_DATA.includes(project)) history.replaceState(null, '', __khProjectUrl(project.id));
       projectDialog.showModal();
       document.body.classList.add('modal-open');
     }
@@ -4074,8 +4138,18 @@ __khBoot(() => {
     closeProjectDialog.addEventListener('click', () => projectDialog.close());
     projectDialog.addEventListener('close', () => {
       document.body.classList.remove('modal-open');
+      if (new URL(location.href).searchParams.has('project')) history.replaceState(null, '', location.pathname + '#work');
+      if (linkedProject) {
+        const pin = window.ScrollTrigger?.getAll().find(t => t.trigger?.id === 'work' && t.pin);
+        const work = document.getElementById('work');
+        if (work) window.scrollTo({top: pin ? pin.start + 1 : work.getBoundingClientRect().top + window.scrollY, behavior: 'instant'});
+      }
       SoundEngine.close();
     });
+  }
+  const linkedProject = new URL(location.href).searchParams.get('project');
+  if (linkedProject && PROJECTS_DATA.some(p => p.id === linkedProject)) {
+    csOpen(linkedProject); projectDialog.showModal(); document.body.classList.add('modal-open');
   }
   let savedTheme = 'dark'; /* always open in dark mode */
   root.setAttribute('data-theme', savedTheme);
