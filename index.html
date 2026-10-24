@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Khaled Ramadan — Portfolio in progress</title>
-<meta name="description" content="Khaled Ramadan — brand designer. The portfolio is getting its final touches. Get in touch by email or WhatsApp.">
-<meta name="theme-color" content="#f2f2ef">
+<title>Portfolio — Under construction</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,800..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0a0a0a;--paper:#f2f2ef;--m:clamp(22px,3.4vw,56px);--display:'Archivo',Impact,sans-serif;--ease:cubic-bezier(.7,0,.15,1)}
+/* Display font: put your hero font file next to this page as display.woff2 and it is used automatically.
+   Until then the stack falls back to Anton. */
+@font-face{font-family:'Display';src:url('display.woff2') format('woff2');font-display:swap}
+:root{--ink:#0a0a0a;--paper:#f2f2ef;--m:clamp(22px,3.4vw,56px);--display:'Display','Anton',Impact,sans-serif;--ease:cubic-bezier(.7,0,.15,1)}
 @media (prefers-color-scheme:dark){:root{--ink:#f2f2ef;--paper:#0a0a0a}}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
@@ -27,13 +28,13 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1;tou
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ink);margin-right:10px;animation:bl 1.6s steps(2) infinite}
 @keyframes bl{50%{opacity:0}}
 
-.hero{position:fixed;left:var(--m);right:var(--m);bottom:calc(var(--m) + 84px);z-index:2;display:flex;flex-direction:column;pointer-events:none}
-h1{font:900 min(5.9vw,11.5vh)/.98 var(--display);font-variation-settings:'wdth' 125;text-transform:uppercase;letter-spacing:-.02em}
+.hero{position:fixed;left:var(--m);right:var(--m);bottom:calc(var(--m) + 64px);z-index:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,24vw);column-gap:clamp(30px,5vw,100px);align-items:end;pointer-events:none}
+h1{font:400 clamp(54px,8.8vw,190px)/.94 var(--display);text-transform:uppercase;letter-spacing:.004em}
 .ln{clip-path:inset(0 -100vw 0 0);padding-top:.05em}
-.ln b{display:block;font-weight:inherit;transform:translateY(112%);transition:transform 1s var(--ease)}
+.ln b{display:block;font-weight:400;transform:translateY(112%);transition:transform 1s var(--ease)}
 .ln:nth-child(2) b{transition-delay:.12s}
 .go .ln b{transform:none}
-.lead{align-self:flex-start;margin-bottom:clamp(18px,2.2vw,32px);font-weight:500;font-size:clamp(15px,1.2vw,18px);line-height:1.45;font-weight:400;opacity:0;transform:translateY(10px);transition:opacity .9s .9s,transform .9s .9s}
+.lead{font-size:clamp(15px,1.25vw,19px);line-height:1.45;font-weight:400;padding-bottom:.6em;opacity:0;transform:translateY(10px);transition:opacity .9s .9s,transform .9s .9s}
 .lead strong{font-weight:700}
 .go .lead{opacity:1;transform:none}
 .links{display:flex;gap:clamp(22px,2.6vw,44px)}
@@ -46,96 +47,73 @@ h1{font:900 min(5.9vw,11.5vh)/.98 var(--display);font-variation-settings:'wdth' 
 @keyframes tp{0%{opacity:0;transform:translate(-50%,10px)}12%{opacity:1;transform:translate(-50%,0)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-34px)}}
 
 @media (max-width:760px){
-  .hero{bottom:calc(var(--m) + 70px)}
-  h1{font-size:8.6vw;font-variation-settings:'wdth' 100}
+  .hero{grid-template-columns:1fr;row-gap:22px;bottom:calc(var(--m) + 58px)}
+  h1{font-size:11.6vw}
   .foot{font-size:13px}.links{gap:16px}.lk{font-size:14px}.foot>span:first-child{white-space:nowrap}
-  .lead{margin-bottom:14px}
+  .lead{max-width:34ch;order:-1;padding-bottom:0}
   .foot{align-items:flex-end}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-
-/* Keep content in normal flow so short viewports and zoom remain usable. */
-html,body{height:auto;min-height:100%;overflow-x:clip;overflow-y:auto;overscroll-behavior:auto}
-html{color-scheme:light dark}
-.page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:var(--m);padding-left:max(var(--m),env(safe-area-inset-left));padding-right:max(var(--m),env(safe-area-inset-right));padding-bottom:max(var(--m),env(safe-area-inset-bottom))}
-.top,.foot{position:relative;inset:auto;gap:20px;flex-wrap:wrap}
-.top{min-height:30px;align-items:center}.top-right{display:flex;align-items:center;gap:20px;pointer-events:auto}
-.motion{appearance:none;color:inherit;background:transparent;border:1px solid currentColor;border-radius:999px;padding:5px 11px;font:500 11px/1.5 Inter,system-ui,sans-serif;cursor:pointer}
-.motion:hover{background:var(--ink);color:var(--paper)}.motion:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
-.hero{position:relative;inset:auto;margin-top:auto;padding-top:clamp(190px,36vh,360px);flex-shrink:0}
-h1{font-size:clamp(32px,7vw,116px)}
-.ln{overflow:visible;clip-path:none}.ln b{transform:none;transition:none}
-.lead{opacity:1;transform:none;transition:none;max-width:36em}
-.foot{margin-top:clamp(30px,5vh,60px);flex-shrink:0}.fadein{opacity:1;transition:none}
-.dot{animation:none;opacity:1}.links{flex-wrap:wrap;row-gap:12px}
-canvas{touch-action:pan-y pinch-zoom}.toast{max-width:calc(100vw - 32px);white-space:normal;text-align:center}
-@media(max-width:760px){h1{font-size:8.6vw}.top{font-size:13px}.top-right{gap:12px}.hero{padding-top:clamp(180px,34svh,300px)}.foot{align-items:center}.lead{font-size:15px}.links{gap:20px}}
-@media(max-width:360px){.top{gap:10px}.top-right{gap:9px}.motion{padding:4px 8px}.foot{gap:18px}.links{gap:18px}}
-@media(max-height:500px) and (min-width:761px){.hero{padding-top:170px}h1{font-size:clamp(38px,7vw,88px)}}
-@media(prefers-reduced-motion:reduce){.motion{display:none}}
 </style>
 </head>
 <body>
-<canvas id="cv" aria-hidden="true"></canvas>
-<main class="page">
+<canvas id="cv" aria-label="Two caution tapes you can pull"></canvas>
 
-<header class="top"><span>Khaled Ramadan</span><span class="top-right"><span class="mute" id="year">2026</span></span></header>
+<div class="top"><span>Portfolio</span><span class="mute">2026</span></div>
 
 <section class="hero" id="hero">
-  <p class="lead">Good design takes time.<br><span class="mute">Apparently, so does picking a font.</span></p>
-  <h1><span class="ln" style="display:block"><b>Under</b></span><span class="ln" style="display:block"><b>construction.</b></span></h1>
+  <h1><div class="ln"><b>Under</b></div><div class="ln"><b>construction.</b></div></h1>
+  <p class="lead">A brand is being poured, cured and kerned. Please keep feedback behind the barrier. <strong>Go on, pull the tape.</strong></p>
 </section>
 
 <div class="foot">
-  <span><i class="dot" aria-hidden="true"></i>Available for work</span>
+  <span><i class="dot"></i>Under construction</span>
   <span class="links fadein">
     <a class="lk" href="mailto:iamkhaledramadan@gmail.com">Email<span>↗</span></a>
     <a class="lk" href="https://wa.me/201010166582" target="_blank" rel="noopener">WhatsApp<span>↗</span></a>
   </span>
 </div>
 
-</main>
-<div id="announcement" class="sr-only" role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></div>
 <script>
 var cv = document.getElementById('cv'), ctx = cv.getContext('2d'), body = document.body;
 var W, H, DPR, mobile, ink = '#0a0a0a', paper = '#f2f2ef';
 var still = matchMedia('(prefers-reduced-motion:reduce)').matches;
-var MSG = 'DESIGNER AT WORK  \u2022  PIXELS UNDER SUPERVISION  \u2022  ONE LAST TWEAK. PROBABLY.  \u2022  MIND THE KERNING  \u2022  ';
-var JOKES = ['That was load-bearing.', 'The pixels saw that.', 'One more revision, then.', 'The tape has trust issues.'];
-var GRAV = .3, breaks = 0, grab = null, tapes = [], textUnit = 0, scroll = 0, mvx = 0, mvy = 0, lastP = null;
+var MSG = 'BRAND IN PROGRESS  \u2022  NO FEEDBACK BEYOND THIS POINT  \u2022  HARD HATS REQUIRED  \u2022  PLEASE DO NOT TOUCH THE KERNING  \u2022  ';
+var JOKES = ['Told you.', 'Again? Really?', 'That one is billable.', 'The tape is not free.'];
+var breaks = 0, grab = null, tapes = [], textUnit = 0, scroll = 0, mvx = 0, mvy = 0, lastP = null;
 
 function colors(){
   var cs = getComputedStyle(document.documentElement);
   ink = cs.getPropertyValue('--ink').trim(); paper = cs.getPropertyValue('--paper').trim();
 }
 function size(){
-  DPR = Math.min(window.devicePixelRatio || 1, 1.75); W = innerWidth; H = innerHeight; mobile = W < 760;
+  DPR = window.devicePixelRatio || 1; W = innerWidth; H = innerHeight; mobile = W < 760;
   cv.width = W * DPR; cv.height = H * DPR;
 }
 
 function Tape(kind, ax, ay, bx, by, h, slack){
-  var n = 32, chord = Math.hypot(bx - ax, by - ay);
-  this.sag = Math.sqrt(Math.max(0, slack - 1) * 3 * chord * chord / 8); this.kind = kind; this.h = h; this.n = n; this.rest = chord * slack / (n - 1); this.ax = ax; this.ay = ay; this.bx = bx; this.by = by; this.broken = -1; this.brokeAt = 0; this.pts = [];
+  var n = 60, chord = Math.hypot(bx - ax, by - ay);
+  this.kind = kind; this.h = h; this.n = n; this.rest = chord * slack / (n - 1); this.ax = ax; this.ay = ay; this.bx = bx; this.by = by; this.broken = -1; this.brokeAt = 0; this.pts = [];
   this.drop();
 }
 Tape.prototype.drop = function(){
   this.pts = []; this.broken = -1;
   for (var i = 0; i < this.n; i++){
-    var t = i / (this.n - 1), x = this.ax + (this.bx - this.ax) * t, y = this.ay + (this.by - this.ay) * t + 4 * this.sag * t * (1 - t);
+    var t = i / (this.n - 1), x = this.ax + (this.bx - this.ax) * t, y = -90 - Math.random() * 120 - Math.abs(t - .5) * 40;
     this.pts.push({x:x, y:y, px:x, py:y});
   }
   var f = this.pts[0], l = this.pts[this.n - 1]; f.x = f.px = this.ax; f.y = f.py = this.ay; l.x = l.px = this.bx; l.y = l.py = this.by;
 };
 Tape.prototype.step = function(){
   var p = this.pts, n = this.n, i, k;
-  for (var s = 0; s < 1; s++){
+  for (var s = 0; s < 2; s++){
     for (i = 1; i < n - 1; i++){
       if (grab && grab.t === this && grab.i === i) continue;
-      var q = p[i], vx = (q.x - q.px) * .988, vy = (q.y - q.py) * .988;
-      q.px = q.x; q.py = q.y; q.x += vx; q.y += vy + GRAV;
+      var q = p[i], vx = (q.x - q.px) * .992, vy = (q.y - q.py) * .992;
+      q.px = q.x; q.py = q.y; q.x += vx; q.y += vy + .3;
     }
     if (grab && grab.t === this){ var g = p[grab.i]; g.x = g.px = grab.x; g.y = g.py = grab.y; }
-    for (k = 0; k < 6; k++){
+    for (k = 0; k < 14; k++){
       for (i = 0; i < n - 1; i++){
         if (i === this.broken) continue;
         var a = p[i], b = p[i + 1], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || .0001, df = (d - this.rest) / d;
@@ -160,26 +138,19 @@ Tape.prototype.snap = function(i){
   this.broken = i; this.brokeAt = performance.now(); var q = this.pts[i];
   grab = null; cv.style.cursor = 'default';
   var el = document.createElement('div'); el.className = 'toast'; el.textContent = JOKES[Math.min(breaks, JOKES.length - 1)]; breaks++;
-  el.style.left = Math.max(110, Math.min(W - 110, q.x)) + 'px'; el.style.top = Math.max(60, q.y - 40) + 'px'; document.body.appendChild(el); setTimeout(function(){ el.remove(); }, 2000);
+  el.style.left = q.x + 'px'; el.style.top = Math.max(60, q.y - 40) + 'px'; document.body.appendChild(el); setTimeout(function(){ el.remove(); }, 2000);
   // kick the loose ends
   for (var j = -4; j <= 5; j++){ var r = this.pts[i + (j > 0 ? j : j - 1)]; if (r){ r.x += (j > 0 ? 1 : -1) * 14; r.y -= 10; } }
 };
 
 function build(){
-  var hr = document.querySelector('.lead').getBoundingClientRect();
-  var zt = (mobile ? 92 : 112), zb = Math.min(H * .64, hr.top - 64), zone = Math.max(120, zb - zt), x0 = -W * .05, x1 = W * 1.05, chord = x1 - x0;
-  var h = Math.max(28, Math.min(54, zone * .2, W * .034));
-  function sl(ay, by){ var c = Math.hypot(x1 - x0, by - ay); return 1 + 8 * (zone * .12) * (zone * .12) / (3 * c * c); }
-  var a1 = zt + zone * .42, b1 = zt + zone * .02, a2 = zt + zone * .02, b2 = zt + zone * .42, mid = zt + zone * .22;
-  GRAV = .025;
-  tapes = [ new Tape('text', x0, a1, x1, b1, h, sl(a1, b1)), new Tape('hazard', x0, a2, x1, b2, h, sl(a2, b2)) ];
-  // Start from an analytic resting curve: no blocking warm-up simulation.
-  textUnit = 0; textTexture = null;
-
+  var h = mobile ? 34 : Math.min(58, Math.max(40, W * .036)), sl = mobile ? 1.03 : 1.016;
+  var x0 = -W * .05, x1 = W * 1.05;
+  tapes = [
+    new Tape('text',  x0, H * (mobile ? .20 : .24), x1, H * (mobile ? .12 : .15), h, sl),
+    new Tape('hazard', x0, H * (mobile ? .10 : .12), x1, H * (mobile ? .24 : .27), h, sl)
+  ];
 }
-var rebuildT = 0, lastHeroH = 0;
-var glyphCache = new Map(), textTexture = null;
-function rebuild(){ clearTimeout(rebuildT); rebuildT = setTimeout(function(){ size(); build(); draw(); wake(); }, 120); }
 
 // geometry helpers for a piece of the rope
 function piece(t, a, b){
@@ -189,8 +160,7 @@ function piece(t, a, b){
 }
 function at(pc, s){
   s = Math.max(0, Math.min(pc.len, s)); var P = pc.t.pts, c = pc.cum, j = 1;
-  var lo = 1, hi = c.length - 1;
-  while (lo < hi){ var midIndex = (lo + hi) >> 1; if (c[midIndex] < s) lo = midIndex + 1; else hi = midIndex; } j = lo;
+  while (j < c.length - 1 && c[j] < s) j++;
   var A = P[pc.a + j - 1], B = P[pc.a + j], seg = (c[j] - c[j - 1]) || 1, u = (s - c[j - 1]) / seg;
   var tx = B.x - A.x, ty = B.y - A.y, l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
   return {x:A.x + (B.x - A.x) * u, y:A.y + (B.y - A.y) * u, nx:-ty, ny:tx, ang:Math.atan2(ty, tx)};
@@ -207,26 +177,13 @@ function fillStrip(sp, color){
   ctx.closePath(); ctx.fillStyle = color; ctx.fill();
 }
 function drawText(pc){
-  var fs = pc.t.h * .3, h = pc.t.h, font = '700 ' + fs + 'px Inter, system-ui, sans-serif';
-  var key = fs + ':' + ink + ':' + paper + ':' + DPR;
-  if (!textTexture || textTexture.key !== key){
-    var texture = document.createElement('canvas'), pen = texture.getContext('2d'), widths = [], unit = 0, spacing = fs * .16;
-    pen.font = font;
-    for (var i = 0; i < MSG.length; i++){ widths.push(pen.measureText(MSG[i]).width + spacing); unit += widths[i]; }
-    texture.width = Math.ceil(unit * DPR); texture.height = Math.ceil(h * DPR);
-    pen.setTransform(DPR, 0, 0, DPR, 0, 0); pen.font = font; pen.fillStyle = paper; pen.textBaseline = 'middle';
-    var x = 0;
-    for (var i = 0; i < MSG.length; i++){ pen.fillText(MSG[i], x, h / 2); x += widths[i]; }
-    textTexture = {key:key, image:texture, unit:unit};
-  }
-  // Warp a cached bitmap along the rope instead of laying out every letter every frame.
-  for (var s = 0; s < pc.len;){
-    var source = (s + scroll) % textTexture.unit, width = Math.min(24, pc.len - s, textTexture.unit - source);
-    if (width < .001){ s += .001; continue; }
-    var p = at(pc, s + width / 2);
-    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang);
-    ctx.drawImage(textTexture.image, source * DPR, 0, width * DPR, h * DPR, -width / 2, -h / 2, width + .25, h);
-    ctx.restore(); s += width;
+  var fs = pc.t.h * .3; ctx.font = '700 ' + fs + 'px Inter, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = paper;
+  var sp = fs * .16, s = -(scroll % textUnit), idx = 0;
+  if (!textUnit){ textUnit = 0; for (var c = 0; c < MSG.length; c++) textUnit += ctx.measureText(MSG[c]).width + sp; }
+  while (s < pc.len){
+    var ch = MSG[idx % MSG.length], w = ctx.measureText(ch).width + sp, mid = s + w / 2;
+    if (mid >= 0 && mid <= pc.len && ch !== ' '){ var p = at(pc, mid); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang); ctx.fillText(ch, 0, 0); ctx.restore(); }
+    s += w; idx++;
   }
 }
 function drawHazard(pc){
@@ -254,17 +211,12 @@ function draw(){
   });
 }
 
-var last = 0, accumulated = 0, raf = 0, paused = false;
-function wake(){ if (!raf && !paused && !still && !document.hidden){ last = 0; raf = requestAnimationFrame(frame); } }
+var last = 0;
 function frame(ts){
-  raf = 0;
-  if (paused || still || document.hidden) return;
-  var dt = last ? Math.min(.05, (ts - last) / 1000) : 1 / 60;
-  last = ts; scroll += dt * 46; accumulated += dt;
-  var count = 0;
-  while (accumulated >= 1 / 60 && count < 3){ tapes.forEach(function(t){ t.step(); }); accumulated -= 1 / 60; count++; }
-  if (count) draw(); raf = requestAnimationFrame(frame);
+  var dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; scroll += dt * 46;
+  tapes.forEach(function(t){ t.step(); }); draw(); requestAnimationFrame(frame);
 }
+
 // input
 function nearest(x, y){
   var best = null, bd = 1e9;
@@ -276,12 +228,11 @@ function nearest(x, y){
 }
 cv.addEventListener('pointerdown', function(e){
   var n = nearest(e.clientX, e.clientY); if (!n || n.t.broken >= 0) return;
-  grab = {t:n.t, i:n.i, x:e.clientX, y:e.clientY}; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; if (paused || still) draw();
+  grab = {t:n.t, i:n.i, x:e.clientX, y:e.clientY}; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing';
 });
 cv.addEventListener('pointermove', function(e){
   if (lastP){ mvx = e.clientX - lastP[0]; mvy = e.clientY - lastP[1]; } lastP = [e.clientX, e.clientY];
-  if (grab){ grab.x = e.clientX; grab.y = e.clientY; if (paused || still){ grab.t.step(); draw(); } return; }
-  if (paused || still) return;
+  if (grab){ grab.x = e.clientX; grab.y = e.clientY; return; }
   var n = nearest(e.clientX, e.clientY); cv.style.cursor = n ? 'grab' : 'default';
   tapes.forEach(function(t){ t.pts.forEach(function(p, i){
     if (i === 0 || i === t.n - 1) return;
@@ -290,18 +241,15 @@ cv.addEventListener('pointermove', function(e){
 });
 function release(){ grab = null; cv.style.cursor = 'default'; }
 cv.addEventListener('pointerup', release); cv.addEventListener('pointercancel', release);
-addEventListener('resize', rebuild);
-if (window.ResizeObserver) new ResizeObserver(function(){ var h = document.getElementById('hero').offsetHeight; if (h !== lastHeroH){ lastHeroH = h; rebuild(); } }).observe(document.getElementById('hero'));
-matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(){ colors(); draw(); });
+addEventListener('resize', function(){ size(); build(); });
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change', colors);
 
-// Start the page without waiting for remote fonts.
-document.getElementById('year').textContent = new Date().getFullYear();
-colors(); size(); build(); draw(); body.classList.add('go'); wake();
-document.addEventListener('visibilitychange', function(){
-  if (document.hidden){ cancelAnimationFrame(raf); raf = 0; last = 0; accumulated = 0; } else wake();
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function(){
+  colors(); size(); build();
+  if (still){ for (var i = 0; i < 260; i++) tapes.forEach(function(t){ t.step(); }); draw(); body.classList.add('go'); return; }
+  setTimeout(function(){ body.classList.add('go'); }, 500);
+  requestAnimationFrame(frame);
 });
-matchMedia('(prefers-reduced-motion:reduce)').addEventListener('change', function(e){ still = e.matches; if (still){ cancelAnimationFrame(raf); raf = 0; draw(); } else wake(); });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ rebuild(); });
 </script>
 </body>
 </html>
