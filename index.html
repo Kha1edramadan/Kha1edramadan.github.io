@@ -79,10 +79,10 @@ canvas{touch-action:pan-y pinch-zoom}.toast{max-width:calc(100vw - 32px);white-s
 <canvas id="cv" aria-hidden="true"></canvas>
 <main class="page">
 
-<header class="top"><span>Khaled Ramadan</span><span class="top-right"><button class="motion" id="motion" type="button" aria-pressed="false">Pause motion</button><span class="mute" id="year">2026</span></span></header>
+<header class="top"><span>Khaled Ramadan</span><span class="top-right"><span class="mute" id="year">2026</span></span></header>
 
 <section class="hero" id="hero">
-  <p class="lead">The portfolio is getting its final touches.<br><span class="mute">Branding. Logos. Visual identities.</span></p>
+  <p class="lead">Good design takes time.<br><span class="mute">Apparently, so does picking a font.</span></p>
   <h1><span class="ln" style="display:block"><b>Under</b></span><span class="ln" style="display:block"><b>construction.</b></span></h1>
 </section>
 
@@ -100,8 +100,8 @@ canvas{touch-action:pan-y pinch-zoom}.toast{max-width:calc(100vw - 32px);white-s
 var cv = document.getElementById('cv'), ctx = cv.getContext('2d'), body = document.body;
 var W, H, DPR, mobile, ink = '#0a0a0a', paper = '#f2f2ef';
 var still = matchMedia('(prefers-reduced-motion:reduce)').matches;
-var MSG = 'PORTFOLIO IN PROGRESS  \u2022  GOOD DESIGN TAKES SHAPE  \u2022  BUILT WITH INTENTION  \u2022  MADE TO MAKE A DIFFERENCE  \u2022  ';
-var JOKES = ['A little break. Back in a moment.', 'Making room for good work.', 'Work in progress.', 'Good things take shape.'];
+var MSG = 'DESIGNER AT WORK  \u2022  PIXELS UNDER SUPERVISION  \u2022  ONE LAST TWEAK. PROBABLY.  \u2022  MIND THE KERNING  \u2022  ';
+var JOKES = ['That was load-bearing.', 'The pixels saw that.', 'One more revision, then.', 'The tape has trust issues.'];
 var GRAV = .3, breaks = 0, grab = null, tapes = [], textUnit = 0, scroll = 0, mvx = 0, mvy = 0, lastP = null;
 
 function colors(){
@@ -297,10 +297,6 @@ matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(){
 // Start the page without waiting for remote fonts.
 document.getElementById('year').textContent = new Date().getFullYear();
 colors(); size(); build(); draw(); body.classList.add('go'); wake();
-document.getElementById('motion').addEventListener('click', function(){
-  paused = !paused; this.setAttribute('aria-pressed', String(paused)); this.textContent = paused ? 'Resume motion' : 'Pause motion';
-  if (paused){ cancelAnimationFrame(raf); raf = 0; } else wake();
-});
 document.addEventListener('visibilitychange', function(){
   if (document.hidden){ cancelAnimationFrame(raf); raf = 0; last = 0; accumulated = 0; } else wake();
 });
