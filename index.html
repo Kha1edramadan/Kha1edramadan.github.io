@@ -1926,12 +1926,21 @@ html.hero-view .site-nav {
 .work-project-link { padding:0; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; }
 .work-project-link:focus-visible { outline:2px solid currentColor; outline-offset:-6px; }
 .work-card:focus-within .view-project-hint { opacity:.95; }
-.cs-share { display:inline-flex; align-items:center; min-height:44px; margin:0; font-size:.75rem; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
-.cs-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.cs-project-extras { display:flex; flex-wrap:wrap; align-items:flex-start; gap:32px 64px; margin:48px 0; }
+.cs-project-extras>div { min-width:0; max-width:100%; }
+.cs-project-extras .cs-lbl { margin:0 0 14px; }
+.cs-keywords { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none; max-width:640px; }
+.cs-keyword { padding:6px 10px; background:var(--border-color); font-size:.75rem; line-height:1.5; overflow-wrap:anywhere; }
+.cs-project-links { display:flex; flex-wrap:wrap; gap:8px 24px; }
+.cs-project-links a { display:inline-flex; align-items:center; min-height:44px; font-size:.85rem; text-decoration:underline; text-underline-offset:5px; overflow-wrap:anywhere; max-width:100%; }
+.cs-sharing { margin-inline-start:auto; }
+.cs-share { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:12px 20px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
+.cs-share:hover:not(:disabled) { background:var(--border-color); }
+.cs-share:disabled { opacity:.55; cursor:default; }
 .project-dialog-header>div:first-child { min-width:0; }
 .project-dialog-header .dialog-title { overflow-wrap:anywhere; }
 .cs-share[hidden] { display:none; }
-@media(max-width:560px) { .project-dialog-header { gap:12px; } }
+@media(max-width:560px) { .project-dialog-header { gap:12px; } .cs-project-extras { flex-direction:column; gap:28px; margin:32px 0; } .cs-sharing { margin-inline-start:0; } }
 .cs-share-link { display:block; width:min(100%,520px); margin:8px 0 16px; padding:12px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
 .cs-share:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
 @media (hover:none) { .view-project-hint { top:auto; bottom:4rem; opacity:.95; transform:translateX(-50%); } }
@@ -3651,7 +3660,7 @@ const __khBoot = fn => {
   if (!SANITY.projectId) return;
   // Only currently published projects are shown; never restore unpublished content from local storage.
   const M = '{"src":coalesce(file.asset->url,image.asset->url),caption,alt,"crop":image.crop,"hotspot":image.hotspot,"dimensions":image.asset->metadata.dimensions,"focus":select(defined(image.hotspot)=>string(round(image.hotspot.x*100))+"% "+string(round(image.hotspot.y*100))+"%")}';
-  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
+  const Q = '*[_type=="project"]|order(order asc,_createdAt asc){"id":coalesce(slug.current,_id),title,category,year,client,role,location,services,overview,showShare,showTags,tags,showLinks,projectLinks[]{label,url},aspectRatio,"coverImage":cover.asset->url,"coverCrop":cover.crop,"coverHotspot":cover.hotspot,"coverDimensions":cover.asset->metadata.dimensions,"blocks":blocks[]{_type,ratio,flip,label,heading,body,text,by,caption,note,url,headingTypography{font,weight},bodyTypography{font,weight},textTypography{font,weight},"file":file.asset->url,"m":media' + M + ',"items":items[]' + M + ',"colors":colors[]{hex,name}}}';
   const focus = (hotspot, crop) => {
     if (!hotspot || !Number.isFinite(hotspot.x) || !Number.isFinite(hotspot.y)) return '';
     const c = crop || {}, width = 1 - (c.left || 0) - (c.right || 0), height = 1 - (c.top || 0) - (c.bottom || 0);
@@ -3770,6 +3779,11 @@ const __khBoot = fn => {
     location: p.location,
     services: p.services || [],
     overview: p.overview,
+    showShare: p.showShare === true,
+    showTags: p.showTags === true,
+    tags: p.tags,
+    showLinks: p.showLinks === true,
+    projectLinks: p.projectLinks,
     aspectRatio: ['3 / 4', '4 / 5', '1 / 1', '4 / 3'].includes(p.aspectRatio) ? p.aspectRatio : '3 / 4',
     coverImage: __khUrl(img(p.coverImage, 1400, p.coverCrop, p.coverDimensions)) || '',
     coverFocus: focus(p.coverHotspot, p.coverCrop) || '50% 50%',
@@ -4034,6 +4048,20 @@ __khBoot(() => {
         return '';
     }
   };
+  const csExtras = (p, shareUrl = '', preview = false) => {
+    const tags = p.showTags === true && Array.isArray(p.tags) ? [...new Set(p.tags.filter(x => typeof x === 'string').map(x => x.trim().replace(/^#+/, '').trim()).filter(Boolean))].slice(0, 8).map(x => x.slice(0, 40)) : [];
+    const links = p.showLinks === true && Array.isArray(p.projectLinks) ? p.projectLinks.map(link => {
+      try {
+        if (!link || typeof link.url !== 'string') return null;
+        const url = new URL(link.url);
+        if (url.protocol !== 'https:' || url.username || url.password) return null;
+        return {url: url.href, label: typeof link.label === 'string' && link.label.trim() ? link.label.trim().slice(0, 60) : url.hostname.replace(/^www\./, '')};
+      } catch (_) { return null; }
+    }).filter(Boolean).slice(0, 4) : [];
+    const share = p.showShare === true && shareUrl;
+    if (!tags.length && !links.length && !share) return '';
+    return `<section class="cs-project-extras" aria-label="Project details">${tags.length ? `<div><p class="cs-lbl">Keywords</p><ul class="cs-keywords" aria-label="Project keywords">${tags.map(tag => `<li class="cs-keyword" dir="auto">${csEsc(tag)}</li>`).join('')}</ul></div>` : ''}${links.length ? `<div><p class="cs-lbl">Elsewhere</p><div class="cs-project-links">${links.map(link => `<a href="${csEsc(link.url)}" target="_blank" rel="noopener noreferrer" dir="auto">${csEsc(link.label)}</a>`).join('')}</div></div>` : ''}${share ? `<div class="cs-sharing"><p class="cs-lbl">Share this project</p><button type="button" class="cs-share" ${preview ? 'disabled title="Available after publishing"' : `data-share-url="${csEsc(shareUrl)}"`}>Share project</button><span class="sr-only" id="cs-share-status" role="status"></span></div>` : ''}</section>`;
+  };
   const csOpen = id => {
     const p = PROJECTS_DATA.find(x => x.id === id) || (__khWorkItems(PROJECTS_DATA).some(x => x.id === id && x.placeholder) ? {
       id,
@@ -4068,15 +4096,7 @@ __khBoot(() => {
     const body = blocks.map(csBlock).join('');
     const header = document.querySelector('.project-dialog-header');
     header.remove();
-    let actions = header.querySelector('.cs-actions');
-    if (!actions) {
-      actions = document.createElement('div'); actions.className = 'cs-actions';
-      const close = header.querySelector('#close-project-dialog'); close.before(actions); actions.append(close);
-      const share = document.createElement('button'); share.type = 'button'; share.className = 'cs-share'; share.setAttribute('aria-label', 'Share project'); actions.prepend(share);
-    }
-    const shareButton = actions.querySelector('.cs-share');
-    shareButton.textContent = 'Share ↗'; shareButton.dataset.shareUrl = shareUrl; shareButton.hidden = !real;
-    document.getElementById('project-slides-container').innerHTML = `<span class="sr-only" id="cs-share-status" role="status"></span><div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
+    document.getElementById('project-slides-container').innerHTML = `<div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + csExtras(p, shareUrl) + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
     const content = document.getElementById('project-slides-container');
     content.prepend(header);
     if (!meta.length && !p.overview) content.querySelector('.cs-intro')?.remove();
@@ -4117,7 +4137,7 @@ __khBoot(() => {
       else { await navigator.clipboard.writeText(data.url); button.textContent = 'Link copied ✓'; if(status)status.textContent = 'Project link copied.'; }
     } catch(error) { if(error.name !== 'AbortError') { button.textContent = 'Project link';
         let field = document.getElementById('cs-share-link');
-        if (!field) { field = document.createElement('input'); field.className = 'cs-share-link'; field.id = 'cs-share-link'; field.readOnly = true; field.setAttribute('aria-label', 'Project link'); document.querySelector('.project-dialog-header').after(field); }
+        if (!field) { field = document.createElement('input'); field.className = 'cs-share-link'; field.id = 'cs-share-link'; field.readOnly = true; field.setAttribute('aria-label', 'Project link'); button.after(field); }
         field.value = data.url; field.focus(); field.select();
         if(status)status.textContent = 'Project link selected. Copy it to share.'; } }
   }
