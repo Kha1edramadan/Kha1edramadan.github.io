@@ -4214,7 +4214,7 @@ __khBoot(() => {
     gsap.matchMedia().add('(min-width: 769px)', () => {
       if (!galleryContainer || !workCards.length) return;
       galleryContainer.classList.add('gsap-work-track');
-      const getDist = () => Math.max(0, galleryContainer.scrollWidth - window.innerWidth);
+      const getDist = () => Math.max(0, galleryContainer.scrollWidth - galleryContainer.parentElement.clientWidth);
       if (getDist() > 0) {
         document.documentElement.classList.add('stack');
         gsap.to(galleryContainer, {
@@ -4236,6 +4236,7 @@ __khBoot(() => {
           start: 'top top',
           end: () => `+=${getDist() + window.innerHeight}`,
           pin: true,
+          refreshPriority: .5, // Measure Work pin spacing after the hero and before downstream effects.
           invalidateOnRefresh: true
         });
       }
