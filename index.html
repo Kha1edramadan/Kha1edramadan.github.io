@@ -1927,9 +1927,11 @@ html.hero-view .site-nav {
 .work-project-link:focus-visible { outline:2px solid currentColor; outline-offset:-6px; }
 .work-card:focus-within .view-project-hint { opacity:.95; }
 .cs-share { display:inline-flex; align-items:center; min-height:44px; margin:0; font-size:.75rem; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
-.cs-actions { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+.cs-actions { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.project-dialog-header>div:first-child { min-width:0; }
+.project-dialog-header .dialog-title { overflow-wrap:anywhere; }
 .cs-share[hidden] { display:none; }
-@media(max-width:560px) { .cs-actions { flex-direction:column-reverse; align-items:flex-end; gap:4px; } }
+@media(max-width:560px) { .project-dialog-header { gap:12px; } }
 .cs-share-link { display:block; width:min(100%,520px); margin:8px 0 16px; padding:12px; border:1px solid var(--border-color); background:transparent; color:inherit; font:inherit; font-size:.8rem; }
 .cs-share:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
 @media (hover:none) { .view-project-hint { top:auto; bottom:4rem; opacity:.95; transform:translateX(-50%); } }
@@ -4070,10 +4072,10 @@ __khBoot(() => {
     if (!actions) {
       actions = document.createElement('div'); actions.className = 'cs-actions';
       const close = header.querySelector('#close-project-dialog'); close.before(actions); actions.append(close);
-      const share = document.createElement('button'); share.type = 'button'; share.className = 'cs-share'; actions.prepend(share);
+      const share = document.createElement('button'); share.type = 'button'; share.className = 'cs-share'; share.setAttribute('aria-label', 'Share project'); actions.prepend(share);
     }
     const shareButton = actions.querySelector('.cs-share');
-    shareButton.textContent = 'Share project ↗'; shareButton.dataset.shareUrl = shareUrl; shareButton.hidden = !real;
+    shareButton.textContent = 'Share ↗'; shareButton.dataset.shareUrl = shareUrl; shareButton.hidden = !real;
     document.getElementById('project-slides-container').innerHTML = `<span class="sr-only" id="cs-share-status" role="status"></span><div class="cs-intro"><dl class="cs-meta">${meta.map(([k, v]) => `<div><dt>${csEsc(k)}</dt><dd dir="auto">${csEsc(v)}</dd></div>`).join('')}</dl><div><p class="cs-lbl">Overview</p><p class="cs-ov${p.overview ? '' : ' empty'}" dir="auto">${csEsc(p.overview || 'Brief, approach and outcome will be added here.')}</p></div></div>` + `<div class="cs-blocks">${body}</div>` + `<div class="cs-foot"><button type="button" class="cs-back" data-cs="close"><span class="cs-nl">All projects</span><span class="cs-nt">Back to work</span></button><button type="button" class="cs-next" data-cs="next" data-id="${csEsc(nxt ? nxt.id : '')}"><span class="cs-nl">Next project</span><span class="cs-nt">${csEsc(nxt ? nxt.title : '')}</span></button></div>`;
     const content = document.getElementById('project-slides-container');
     content.prepend(header);
