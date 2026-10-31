@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /base200_v46.html
+Disallow: /portfolio-github-pages.zip
+
+Sitemap: https://khaledesign.online/sitemap.xml

@@ -5964,7 +5964,7 @@ window.KS = (function () {
     band.frequency.setValueAtTime(280,time);
     band.frequency.exponentialRampToValueAtTime(2050,time+.53);
     var gain=ctx.createGain(); gain.gain.setValueAtTime(.0001,time);
-    gain.gain.linearRampToValueAtTime(.075,time+.105);
+    gain.gain.linearRampToValueAtTime(.26,time+.105);
     gain.gain.exponentialRampToValueAtTime(.0001,time+.58);
     source.connect(band);band.connect(gain);gain.connect(main);
     source.start(time);source.stop(time+.61);
@@ -6013,7 +6013,7 @@ window.KS = (function () {
     }
     slV += (Math.min(v, 3200) - slV) * .4;
     var a = Math.pow(Math.min(slV / 2600, 1), .6), t = ctx.currentTime;
-    sl.g.gain.setTargetAtTime(Math.max(.012, a * .06), t, .05);
+    sl.g.gain.setTargetAtTime(Math.max(.027, a * .13), t, .05);
     sl.f.frequency.setTargetAtTime(1300 + a * 2200, t, .07);
     clearTimeout(slT);
     slT = setTimeout(stopSlide, 120);
@@ -6030,7 +6030,7 @@ window.KS = (function () {
     band.frequency.setValueAtTime(300, time);
     band.frequency.exponentialRampToValueAtTime(1800, time + .42);
     var gain = ctx.createGain(); gain.gain.setValueAtTime(.0001, time);
-    gain.gain.linearRampToValueAtTime(.045, time + .09);
+    gain.gain.linearRampToValueAtTime(.18, time + .09);
     gain.gain.exponentialRampToValueAtTime(.0001, time + .46);
     source.connect(band); band.connect(gain); gain.connect(main);
     source.start(time); source.stop(time + .5);
