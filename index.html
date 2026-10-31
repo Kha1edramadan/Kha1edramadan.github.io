@@ -6159,19 +6159,9 @@ window.KS = function () {
   /* ---------- public sounds ---------- */
   var tb = 0,
     tt = 0,
-    muteUntil = 0;
+    muteUntil = 0,
+    lane = 0;
   function muted() { return performance.now() < muteUntil; }
-  /* Fast scrolling or a jump (Home / End / Back to top / scrollbar drag) crosses many triggers at once.
-     While that happens every page-movement sound stays silent, so nothing piles up. */
-  var jy = 0, jt = 0;
-  try { jy = scrollY; jt = performance.now(); } catch (e) {}
-  addEventListener('scroll', function () {
-    var n = performance.now(), dy = Math.abs(scrollY - jy), dt = Math.max(1, n - jt);
-    jy = scrollY; jt = n;
-    if (dy > innerHeight * .6 || dy / dt > 4.5) { muteUntil = n + 1100; if (sl) release(); }
-  }, { passive: true });
-  /* page-movement sounds share one lane: whoosh, pull, land and settle can never overlap */
-  var lane = 0;
   function laneFree(ms) {
     if (testing) return true;
     var n = performance.now();
@@ -6179,6 +6169,15 @@ window.KS = function () {
     lane = n;
     return true;
   }
+  /* A jump (Home / End / Back to top / dragging the scrollbar) crosses every section at once.
+     While it lasts the page-movement sounds stay silent, so they never all fire together. */
+  var jy = 0, jt = 0;
+  try { jy = scrollY; jt = performance.now(); } catch (e) {}
+  addEventListener('scroll', function () {
+    var n = performance.now(), dy = Math.abs(scrollY - jy), dt = Math.max(1, n - jt);
+    jy = scrollY; jt = n;
+    if (dy > innerHeight * 1.2 || dy / dt > 8) muteUntil = n + 1100;
+  }, { passive: true });
   var api = {
     init: init,
     state: function () {
@@ -6193,23 +6192,27 @@ window.KS = function () {
       if (AC) out.gain.setTargetAtTime(on ? MASTER : 0, T(), .05);
       if (!on && sl) release();
     },
-    slide: function (v) { if (muted() || document.hidden) return; slide(v); },
-    quiet: function (ms) { muteUntil = performance.now() + (ms || 1200); if (sl) release(); },
+    slide: function (v) { if (muted()) return; slide(v); },
+    quiet: function (ms) { muteUntil = performance.now() + (ms || 1200); },
     hover: function () {},
     /* soft press: low body D3 -> A2 + a small filtered tap */
-    /* the one click of the site: the supplied slide-click sample, kept quiet. Only work cards and the project dialog call it. */
+    /* the click of the site: the supplied sample, kept very quiet and softened so it never stands out */
     click: function () {
       if (!ok() || !gate('ui', 90)) return;
       if (SMP) {
-        var s = AC.createBufferSource(), g = AC.createGain();
+        var s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
         s.buffer = SMP;
         s.playbackRate.value = .99 + Math.random() * .02;
-        g.gain.value = .2;
-        s.connect(g);
+        f.type = 'lowpass';
+        f.frequency.value = 3600;
+        f.Q.value = .4;
+        g.gain.value = .085;
+        s.connect(f);
+        f.connect(g);
         g.connect(B.ui);
         s.start(T(0));
       } else {
-        tone(B.ui, 176, 132, .035, .02, 'sine', 0, .003);
+        tone(B.ui, 176, 132, .035, .016, 'sine', 0, .003);
       }
     },
     /* selection tick: each slide index has its own pentatonic note */
@@ -6226,7 +6229,7 @@ window.KS = function () {
       tb = 0;
     },
     /* chat: message sent (up-glide press) and answer received (soft A4 -> D5) */
-    send: function () {},
+    send: function () { api.click(); },
     recv: function () {},
     confirm: function () {
       api.click();
@@ -6236,10 +6239,10 @@ window.KS = function () {
     open: function () { api.click(); },
     close: function () { api.click(); },
     /* theme switch: two notes, down for dark, up for light */
-    theme: function () {},
+    theme: function () { api.click(); },
     /* page transitions: original character, now exclusive + ducking */
     whoosh: function () {
-      if (!ok() || muted() || !gate('w', 800) || !laneFree(900)) return;
+      if (!ok() || muted() || !gate('w', 800) || !laneFree(700)) return;
       if (!testing && performance.now() - (GT.l || 0) < 1400) return;
       duck(.45, 1.1);
       var fg = AC.createGain();
@@ -6255,7 +6258,7 @@ window.KS = function () {
         wv = null;
       }
       duck(.4, 1.3);
-      tone(B.tr, 130, 46, .9, .2, 'sine');
+      tone(B.tr, 130, 46, .9, .26, 'sine');
       nz(B.tr, 320, .8, .35, .08, 'lowpass');
     },
     /* kept for compatibility (not used by the page right now) */
@@ -6270,13 +6273,12 @@ window.KS = function () {
     },
     /* About: the same pull as the other sections, with its own gate so it plays on every entry, down or up */
     pull: function () {
-      /* one shared gate for every section pull: About / Client Voices / Contact can never stack or machine-gun */
-      if (!ok() || muted() || !gate('pw', 1100) || !laneFree(900)) return;
-      duck(.55, .9);
+      if (!ok() || muted() || !gate('pw', 450) || !laneFree(900)) return;
+      duck(.45, 1.1);
       var fg = AC.createGain();
       fg.connect(B.tr);
       wv = fg;
-      nz(fg, 260, .7, .7, .075, 'bandpass', 0, 2000, .28);
+      nz(fg, 260, .7, .8, .1, 'bandpass', 0, 2200, .3);
     },
     /* Contact: the red dot landing on the line, a soft low weight far quieter than land */
     settle: function () {
@@ -6347,14 +6349,10 @@ window.KS = function () {
   });
   function wire() {
     label();
-    /* click sound: only when pressing a work card, and inside the opened project */
     document.addEventListener('click',function(event){
       var el=event.target;
-      if(!el || !el.closest)return;
-      var inWork = el.closest('#work .work-card'),
-          inDialog = el.closest('#project-dialog');
-      if(!inWork && !inDialog)return;
-      var t=el.closest('button,a[href],[role="button"],.work-card,summary,label');
+      if(!el || !el.closest || el.closest('#feedback') || el.closest('#sound-toggle'))return;
+      var t=el.closest('button,a[href],label,summary,[role="button"],[role="tab"],.work-card,input[type="radio"],input[type="checkbox"]');
       if(!t || t.disabled || t.getAttribute('aria-disabled')==='true')return;
       api.click();
     });
