@@ -5865,15 +5865,16 @@ window.KS = function () {
     on = true,
     GT = {};
   var MASTER = .9;
+  var SMP = null, SMP_B64 = 'UklGRkYyAABXQVZFZm10IBAAAAABAAEAAH0AAAD6AAACABAATElTVBoAAABJTkZPSVNGVA4AAABMYXZmNjAuMTYuMTAwAGRhdGEAMgAAAAD+//z/+v/4//b/9P/z//D/7v/s/+r/5//l/+L/3v/d/9v/1v/T/8//zf/J/8b/xP+//7r/tv+0/7D/rf+r/6n/qv+m/6P/oP+g/53/mP+X/5f/lv+T/47/i/+L/4z/h/+E/4b/gv+A/33/gP+A/37/fP91/3T/eP90/3b/cP9q/27/av9v/3D/av9p/2T/Yv9g/13/WP9R/1L/Tf9F/0L/Qf9B/0T/SP9I/0v/TP9Q/1P/V/9f/17/Y/9m/27/bv9q/2n/Z/9r/2j/Y/9f/1v/VP9O/0z/TP9J/0X/RP9F/0j/RP9D/zv/Ov81/zH/OP86/0L/Qf85/zr/Nv82/zr/N/83/zj/OP8w/zL/NP8r/yn/Kf8w/yz/Kv8r/y3/L/8x/zH/LP8q/yP/Iv8k/yL/If8j/x3/HP8g/x3/H/8f/yH/Hf8a/xj/Ff8Z/xf/Fv8U/wz/EP8P/w3/Df8O/xL/EP8M/wj/Bv8K/wn/+v76/v/+AP/9/vr+/v71/vf+/P77/v3++v4C//7+//4E/wL/Cf8F/wL/Af8A/wD/BP8B//n+/P76/vL++v71/uv+6/7t/ur+6f7s/u7+8P7t/vP+9f75/v3++f71/vT+8v73/v3+9v74/vf++P7//gD/Av8C/wn/CP8G/wv/DP8O/xD/Df8M/wz/C/8K/wj/Bf8H/wv/Cv8H/wf///79/v/++f76/vf++v72/vD+7v7q/uX+4f7e/t/+4P7e/tv+2v7b/tP+2P7N/s3+zP7Q/tr+2/7e/uP+4v7r/u7+8f7y/vP+9P73/vz+9/76/vz+/P78/gD//f4B/wP///4A//v+/P4A///++/77/vX+7v7y/vT+9v73/v3+/v4A/wH//f4C/wL/Bv8O/xP/EP8T/xr/HP8c/x3/I/8l/yL/JP8h/yH/Jf8u/yr/Kv8s/yP/Iv8k/yT/KP8p/y7/K/8t/zD/L/8t/yj/Jf8o/yn/K/8u/yr/Lf8p/y//MP8w/zP/K/8u/yz/I/8i/yD/Hv8f/yX/L/8z/zb/OP89/0P/Q/9H/0z/S/9M/1L/VP9a/1f/Wv9h/2H/Y/9q/3L/cP9u/3n/g/99/33/gv9+/3v/eP9y/3H/cv9w/3P/dv94/33/h/+J/5D/lP+S/5f/kf+P/5L/lf+W/5z/o/+g/6H/pv+n/6L/oP+g/6D/nf+c/6b/oP+Z/5f/mP+Z/5f/nv+c/5j/lv+U/5T/lP+Z/5z/m/+c/5r/pP+n/6n/qv+r/6j/rP+u/7T/uP+5/7f/sv+2/77/wv+//8H/u/+4/8j/zf/O/8j/wf/E/8D/xf+9/7r/vf+7/7z/uf+9/7P/qP+l/6f/rP+l/6T/pf+k/7D/r/+r/7D/s/+2/7P/t/+0/7P/r/+k/6X/p/+o/6z/rv+l/6f/t/+5/73/wP+7/7r/wP/F/8D/vf/D/7z/uf+4/7f/tP+x/67/s/+1/73/wf/H/8f/z//S/9X/2v/Z/93/3f/h/+X/5f/p/+3/7f/v//P/+P/2/+7/7v/y//T/+P/w/+r/5//i/+X/5v/o/+r/7f/2//7/+P8AAPz/9//5//z/BwAHABMAHwAfACkAJAAmACoAIQAlACoAJwAsAB4AGwAeABoAEgAIABAAEQAYACcALQA8ADgANQA+AD0AOQA9ADgAMgA0ADkAQQBIAFIAWABXAFcAWQBYAFoAWgBdAGMAZwBvAHIAfQB8AHYAeAB5AH0AegB6AHQAcAByAGkAcQBoAG0AcgBuAHIAbQBsAG0AYQBcAGYAbQBwAG4AcABtAG4AcABsAGYAbQBsAGwAbQBjAGkAaQBlAGIAWQBRAFAAVABPAFgAagBmAGoAcABiAF8AWwBUAFQAVQBSAFQAZABwAHIAfQB+AHcAcQBpAGsAawBnAGUAZwBzAIAAjACNAJcAlQCVAJcAlwCXAKAApgCkAKsArwCwAK8AqgCoAKwAqgCxALAApQCdAJkAlwCIAIUAggCAAIcAhgCKAI0AjgCQAIkAhgCGAH0AewB5AIMAkgCdAJoAlACRAJEAkgCGAIwAlgCNAJEAlgCSAJAAlACPAIMAfwB7AIEAgQCBAIYAhQCIAIMAfwCDAIAAfQBwAHAAdgCAAIEAhgCCAHcAcABtAGQAYQBoAGoAbgB1AH0AeQByAHEAgQCMAIUAhgCQAJIAjACEAIUAfQCFAIEAgQCOAI0AmACcAKQAqgCkAKcAqQC0ALcAsACuAKYAnQCTAJMAjQCNAI4AjACLAJUAlwCOAJIAiQB0AHoAcABwAHkAeACCAIcAigCNAI0AmACbAJwAoACPAI8AjgCRAIoAhQCDAH8AkACVAKEApACTAJAAjQB6AHgAYwBdAGUAaQBwAHQAcgB7AHgAdQB1AHUAdgBwAGcAcwCAAIsAlQCTAJIAjACSAJcAnACrAKUArgCyAKkAtACpAKAAlACLAJAAhACJAJIAgACIAH0AbgBpAFoASwBSAFoAVABaAGMAXwBbAF4AUgBGADUAMAA0ADUATABVAFYAUgBRAFYAYABtAHAAbwB1AHEAXABUAEkAQQBHAE4AZAB1AIAAkgCfAKEAkwB9AHQAbQBpAGoAawBuAF8AXABeAGMAagBcAFkAVQBMAFgAXwBYAFsATwA7ADcANAAsAC8AMgBCAFYAXQBbAE8AQwAzAC8ALwA5ADoATgBgAGMAfABvAFgAUABEADIAMgA9ADMAMgA0ADgAMwAsAB8AEgAUABoAEgAJAAAAAgANAAkAIwAiABYAGgD+/woAIgAxAEkAPQAwACsAKAAqAAgA/P/l/9v/8v8FACYANQA4AEAAOgA8ADAAGwALAP3/9//0/+7/AgAIAO7/9f/0//b/8//3//z/+/////v/5//V/8v/u//B/9D/7P/4/w8AHQAGAP/////7/+r/2P/R/8j/0//x////EAAOAAgA/v/W/9D/wv+5/7f/sP+9/77/v/+1/6H/of+Z/6r/xf/M/+3//v/3//b/5v+6/5n/fP90/3v/mf+u/7T/wP+4/7n/0f/j//L/2v+//8//zP/M/9f/wf+7/7f/uv+0/7z/1//R/8z/3f/Q/7j/l/+U/47/iv+a/47/e/9s/2H/Z/96/2z/Yv9i/1X/Wf9h/2v/jP+X/33/df+D/6L/rf+U/5v/mP+T/6X/lf+V/8H/z//S/8b/3P8FAPT/MQA7AAwAIQDk/8H/tf+M/4D/ff9s/3X/av9W/1z/RP9c/1P/Rv9//3X/hP+k/43/pf+i/4T/ef9w/4X/n/+5/+T/2v/l/wIACAAYAPT/v/+X/2D/Pv8+/z//Vv99/4n/v//P/8n/1P+9/5b/a/96/1r/VP+I/3b/dv9w/2v/dP9E//v+2v7y/ij/P/9d/3b/hv+e/8D/4f/8/+//0//M/73/vf/F/8//+v/m/6z/ov+k/7D/1P8DACIAGwA/AFcAJQD7//r/sf+K/7H/o/+b/5//sf+0/4z/b/9K/z//Tf84/zL/Rv9V/1n/XP9y/4X/V/8k/0n/bf+A/5f/lf+1/9j/EQA7ADoAWAAzAOX/5P/f/9n/w/+v/67/p//U//7/1P+n/4H/av93/3v/jP+9/5X/mP/J/8T/3f+q/4j/jv9f/3b/ef9U/yz/Ef9z/5z/fP9//4L/Xv88/3r/l/98/5n/hv+h/+j/SgCTAGEASAASAB4AHQAjADYA5//s/8j/wP8EAPT/w/+J/3//if+d/+X/+v+6/5D/v/8CAOb/p/+g/2//YP+L/4v/dP9e/3//kv+A/4D/N//7/hz/Kf9c/7D/8P8AANz/BQBEAFwAgwBEAGEAdgA3AHQAVAAFAMr/jv+y/5H/u//f/57/Rf/t/uX+EP9x/1T/IP9O/2T/Sv9R/zz/IP8w/0D/h//a//P/cwCSACkAKwDFAJgACgDU/5v/vP8LAGkAUQBtAPsAJgH9ACkBOwESAcoAMgBxAMYAmgC5ADoAzf8nAKcAOAD0/0UAr/+B/3//QP9K/2X+sf3v/Vr+ZP5e/oL+df5U/kP+a/4n/2L/Hf9o/9f/0v9k//T+nf6g/vr+lf9hAKAAvQDqAPAAHAFLAVcBGQFfAWgB1gDCAMgAAAErAZQBmwFiAWkBkgBbABsAk/+u/93/WgB+ADYAXwBPAOX/Qv/3/qT+cP5d/07/cP5y/qX+a/+Z/0T/nP/w/8j/gP+c/7f/LP+N/tv+IP9o/2n/Pv/S/5H/Ov+A/47/EAAXAP3/ZQBOAF4A1AC+AAABRwHZAQAC7QFYAjACsgFzAd0B7wFsAW4BBAHHAOgAsgA9ADsAIQDk/+3/4f9uAC4A5/8HAHn/VP9E/xH/ff8RABsA6/8JAEQATQDw/9v/b/8N/wL/Uf+O/3v/c/+B/+r/zf/P/5L/N//g/04AXgAuALL/tP/9/wgALAAwALT/9f9ZAGwAXAD6/2sASgF3AfUA6wADAdEAGgEmAasAOwBSAHgAcQCaAOIAKQGaAS4CCgJfAugC0wKlAogC4ALBAk8CwgLXAj8CKwLbAUIB5QD//1//Hf87/4z/OP8z/7z+a/59/hj+3/1G/sL+zP6i/i3+Bf79/ez9w/1J/Vb9UP1d/Ur9A/73/gX/hv+i/yb/SP8GAJIACgEtARkBVgFxAbUB2wEcAuMCFwNKA4QDtwOjA8IDYwRcBEMENQSoA+ACwgLwApwCdQIAApsBSAEVAY8B5AFwAYwAif/x/tP+k/4R/4z/if+h/wj/3v4X/8/+rv6I/qH+C//O/qv++v73/in//P4M/0v/0f7x/mr/tP/f/4j/H/8E//j+GP9u/2UAuwA3AB0ATAClAHIAFAD6/6X/Vf9l/3z/rv9hANQAyQATAekAWwBlALYAKAFIAVUBeQHGAFgArADNAEUBLAJzAl8CHwLaAf4BCQL1AcgBSAEnAWkBlAHgAeoBkgGtATgCpwL5AuIC7QL8ArsCswLYAqECQALEAe4AUgBHAN//HP/4/gT/5P7B/pT+pf6K/oX+hf5T/hT+f/1i/cn9u/1Z/e78rvx8/H38xvxJ/aj9t/3r/fv92/00/vr+hP/c/wcAKAB6AJMA0gAFARwB0QEWAgUC5AGNAbQBLQJiAmACUAIcAj8CAQOYA8UDnQNNAzIDVAMfA8sCiwJVAnkCDQKqAewB6QHeAe8B0gG3AbgBZQH2AL0ArQCtAHkAaQACAE7/B//+/if/N//3/pz+Pf7S/fP9P/5F/lX+UP42/l3+q/7r/jr/J//P/sH+sv6K/qn+L/86/+D+zP6i/oT+Wv5e/sz+3v6p/r3+6v4I/x//cv/F//j/VABQAGMA1QA0Ab0B3gE0ArkCtAIDAygDcAPvA+sDEwQFBAcEzgNEAyoDFgP5AvMCiQIjAvoBDgIJApkBTAHlAJIAdgAPAIz/Ov/T/oX+Nf4F/sL9bv2U/YT9N/0F/cP8ffyQ/Kr8k/yL/Kj8Bv1e/b39LP61/jX/Yv95/3r/uP80AEEASACLAMEAAQFeAekBdwLSAhsDfAN0A2IDugPSA4cDcANYAxwDNQPcAlgCEQLVAbEBuQHJATQBuACKALT/Ev/m/nv+b/5y/ij+Dv4N/hr+O/4Q/vn9G/4e/i/+gP7H/sL+Bf9R/5r/HgB2ALEA2AD9ADgBMwFfAY0BYQFjAREB8AAZAfAA+AAHAeUA0QCkAKoAtQB5AHAAUwBBAE0ATwCHAI0AmACvAH4AcACqALAA0QAMAfgArgC+AAoB7ADKAPgADgHKAMIA/ADVAM8AxgCcAJQAaAAyAPT/6P/u/8r/p/+C/33/cv9k/5r/d/9g/3b/Cv8K/1j/cf9y/1D/Q/9s/6X/2/8HABIAIgBUAE8AQAAxAEAANAAXAEgAbQCvAMgA3QD8AP0AEQExAXEBjQGfAdUB4AHmAecB0wHRAe8BIQItAjkCFgLxAc0BfQFHAeIAYgA/ACwABgDa/5z/cf9F/wX/tf57/jX++f3T/Z/9f/2A/Vn9Xf1y/X39xv0Y/lf+pf4B/yj/cP+T/8X/FgAgAIsA2AAbAXcBiQHDAegBPgKkAnQCWgJVAkACPAI0AhYC5AHVAcQBcgEfAQQB7ACaADoABwD7/wIA3/+d/2P/2v54/mv+c/60/sL+2/4I/w7/J/8y/0f/X/9U/1b/Yf88/0z/Z/9b/3L/P/9h/37/Uf+S/7X/uP/S//D/EgAoAEsAcADNACABJgE0AT4BYAFsAVABkgHIAXIBSgEoAe0A0gC3AIgAVgA8APT/wv++/5D/hP+F/zf/Rv9m/yP//f7d/s/+of52/o7+xP7l/v3+Ef8t/0H/Zv+///z/HgBqAK8AjAC5ANQAkACtAKEAXwAsAC0ARgAmAPr/AADp/8v/rf9s/4r/h/9v/17/Jf86/zj/SP+A/5z/jv+R/4v/Y/9l/3j/q//D/93/NwBVAH0AdQBmAMAAugC8ANYA2ADZAOQAywCUAIYASwBVAHQAigCfAI0AoAB3ACAA3v/R/8b/q/+Q/5z/p/+T/8v/GQBXAEsA9//Q/w0AFgDf/73/n//A/8H/2P8AAJ//eP+d/5f/ov+d/1z/U/9r/3D/Tv96/3P/KP98/47/eP+s/6v/k/9t/4H/if9x/2j/Pf9n/5b/sP8BABYALACTAIwAWgBIACoA///X/97/AADq/9L/LQBjAFMAnQCOAE4AbQA7AOb/FAAsAE8AnQCQAJoAywDqAPkA8ADRAIYAuQCvAHgAVgDJ/5P/q/+J/4L/Zv9G/z7/Mf8r/yj//f4O/zH/+v7T/tD+8f7G/rP+pP6+/tf+ef5x/lX+Q/46/kj+ev41/j3+X/5K/pj+2P7O/hj/Qf9k/8D/2f8LAFkAjADDAOIA8AAkAUQBPgEqAVIBbwGFAa8BygElAjICDAIvAiMC+wHiAZEBQQFzAXcBKAEiAR8B8wCwAFkAPQBQAEAAOAAiAK3/Q/9K/+X+U/5Y/ln+VP5E/g3+6v3U/cT9W/1r/WD9Xf3T/Xj9Sf1K/Rn9fv2p/b79FP5j/sP+2/7d/tP+Sv/z/wcAPQAxAHAA2QDEANgANwFpAWsBoQF/AWABVQFnAXgBbAGLAZgBqgHTAYQBHwH0ALAAZQAxAB0A6f/E/4b/Y/97/17/b/+3/6H/gP+q/07/Rf9+/xr/y/6s/kf+Z/6//mz+r/7i/qv+4v7+/p3+fv4W/r79Ov1m/Yf4uAK3/U0DkgQ58v38EABR/ewAjfvODZsCzPZ1AeH+SQNoBSsBdAVsAJv16wXOAZgFLhE8+WMBj/uE7/4IiwBh/8EGav7cAxACMQCG/6v7WPuY/cQBfwaNAu//UPlO+0gBzgLuAQb8yfz2/1b/fPts+p72i/bF+sX9CwSWAz4CXgRi/zEAcAUfBtz87vRYAP0IHwkSAov5yf0CAhYGhQoKChcInAUxBfEJLBVkHaEh0hcV/i7lY84/z/bmW/8jBlYKQAyx9avjdN3O5F7r3N6A21DiKPq2GHwmmCRHFm4IEfdH6DjoIvLfAV8SrBbkGLkfZSCxHxIW1ARIAHz71Pcg/MD8MfMY5eHpX/4XCzkGyfY+92kAlQiQDrwElf+hALgB0QYJ8KHQlsao0YzvDwSsDn4T2RI6D0UGG/9x+gr4zfS+8hTrHeJu4/vs+ftdBGgJWw/wEaIQ2QMh/B7/FwSwAQ376/fw/EoM+BdlG1UWrA0ODMwMRQxHDBEQ0hOVEqMOggr9BCMBzwGpAIL9m/9/BnQLeQmiAYH4u/YH9/H1/fCc6Obm8ObR64ryn/gn/wD/5f1M/gj7vfLM6pLqzfXMANUEygazA4P7IfFD7bLy9fkO/Cj1ie+R7SrvvvIa8+X1tfLs61Ppc+tF8Fb4Xf8HBDIJtgyeDjAPjAjOAy4FFgnsDIQOwRIrFfwUsBcoHJQdlBmwFWkX1xhYGAcZfxoyHPIaIRVWEBsMNAUSAez/+v6q+zj05O/y7/jyN/Mk8AjtQu0p7uXtte5n7P3rm+708iv3GfTr7E7rseuf6sTmcuMc46DhCeDI393kK+jB5krk8+OC563sAfP0+qMBkQW7CGgMNhOVGesayhyvH9AiTCgtKIMjlCCdIEkiiyC5HaAdLh7VH2EiUyO4IGIbrRQvDxYLBQfDA4YCOQBH/dj5mfiW+rD5ivj69+X4Nfyr+6f4e/W68oryE/WY90T5dPj99KHype+/65jpYupz7sjwUO7R6hvomOV042/i5uVr6+vu/PHJ9k3+cgRyAzL+1/gz+Af5YfrL/Cr/QAR4CCMLvAtBCZUG6gJDASkDegR7BioI3ArQC+oKDgt+CsIKcw1gD5wPDA6oDJMLDQrZB6YFggUqBqgFTQZOB/kFowJ4AMf/RP6n/mwA4v/s/q39pv09/cH6Yfk5+Dv2RPZc9sL1h/T28DzwD/E58LfxbvNv9Eb2Ovfg9/34efrA+/z6jvpn/DP/pv8W/28ADgLnAvcBMAF7ATYB9wGDA2UEMAZiB0kH5geKCewK6wqHCZ0HqAWXBJ0D2QE3AbQB6QGDAeYBmAIjA1sEnAS9BKAEVgPWAvcBWQEPAbf/dP+1/w3/I/9Z/p38J/xF/Uf/vwCrAOn+if57/1IBxQKkAiwCJAEoAPH+6v10/J38nPz0+9X7fPqv+OT3gPYx9tb2ffhW+xD8AvwH/VP+7P9tAC0ApQABAID/nP8Q/w3/1/4o/s3++//yAPwAUf91/8v/iQDIASECxQLnA9oEFQWEBWYGYQdkCHsIyAdeBrIEEAQuBOgEtgUqBWQEfwQFBU8F2QSOBLUCYADj/kH+rv7k/gD/3f2v/JT88P3V/kb+2v2i/LX7yvtV/Gb9Of+Y/zv/Y/8LAdsCDANIAssC4wLIAC//Qf73/qv/7f1c/PX81P20/un/AgEKAQUB4gBeARYC6AGrAToBEwGyAUICDgJYAnoD4QOPAmwAPADfAdEC9AGtACwAfACwAG4AMQAUAboBTQG5/+z/yAAtAOf+Mf0F/Zz9T/6E/7UAkAGtAUMBfgFgAlYCrgAGAOL/WgB6AMj/0P+n/xIATwDn//b/UQBkAGAA8f8h/779H/3C/S3+3P33/eH+zf4f/qD9W/2n/sb/xP91/07+uv1Z/dv8ov1+/qr++v7q/vD+w/9FAHUBWwLcAVIB1wDnAEAB+QBnAAoAlv+F/+//7/+y/73/BgASAMf/eQCCAf0BHgIDAgMCIQKOAc8AUADw/1MA9gDbALoAYwFpAZ0At/+o/ywA5v94/0v/D/+n/mP+j/4SAG4ByAEzAUkAjACVAN//m/+CAK4BXAGfANkASgGAAWsB8wDzAIYATwCjAMoA9QF2AgkCSwKFAgcDMgO1AsUCEgO6Ag4CuAHhAYsCBQP4AhUDBwRGBfsFtAbqBmUGYQWHBHYEqQSCBC0D+gAeABYAAAAOALv/Of+p/q/+mP4z/kr+Cv9m/1L/Nv9s/9r+Iv4z/jz/Xv82/qj97/3u/v3/tv8H/8n+vf40//n+hP9rAB0Ap/9P/+j/lgAdAG7/yP5N/iP+Wv7g/gf/Xv5T/VP9C/6N/ysBpAHkAB0A7v/1/3sAMgDA/wT/I/7h/fz9h/6D/tH9a/3b/P78Kv7R/gT/sv5R/iH++/1E/rX+Mv9N/xr/nf7s/qL/1v/g//H/XgC9AEsBMAJ6AoACsQEAAe8AcAD7/zf/R/4v/qD+vv6b/hX+JP4m/nL9B/38/BH90P3//f79b/4//hT+TP2Z/CT9iv0o/kL+6/1K/k/+Gf4q/sn+9P5t/nz+nP5Z/4z/Vf9y/5P/fv9y/0UA0gDmAJUA0ABZATEBcgG/AcIBlwFdAc0BbQIiApsBlQGyAVQCCAP0AjQDiwPQA/sDVwOxA9kD+AI7AqkB9gGAAs4CcwJ9AcIAGgC7/7T/9v8LABsAGwBs/3H/0/8bAHUAKgADAKf/hf/0/48AjgC9/xX/vP4S/08AhwBoABYAkf+EAPQA0QD3AM4ANgGrAML/M/9D/8//qv84//P+iv5+/i3/QwD6AHUAVgCdAAkBfwEvAa8BFQK9AfgBNgIVA10DNwKPAe4AnADFAMUAeAF9AQwBAQEkAfgBEQIhAUIAyP96/1v/b/+C/3H/Gf/m/sH+Pf4Z/nT+zf5V/sj9j/0+/UL9Jf0H/Vz9YP2e/SD+/v2b/Xz9dP16/VX9V/2A/X/9P/0T/Tb9wP0M/sr9rv3A/fP9i/7y/nD/pP80/xb/iv8JACEAxP+t/0MA6gDVAVYCQQINAtIBFwJ7AuQCzgJjAl8BjgCjAJIAygC9ADEA7v/r/4kA/AC8AGYAjP8m/5z/7/8xACoA9/8sAHcAqgDyAIYAUP+X/l/+X/6M/tz+M/9c/8v+Z/7n/sD/CQDa/9T/3/8FANL/0/8bAJL/zP7F/lr/AQAqAN3/AgCiANkA6gD0ABsBKwHMAHgAgQC1AHQALwBDAA8AGQBJAE4AggCpAKIAiABSAAYA4v8HAFEAjgDZABYBvQBNAPT/YwAvATUB4QCDAJIANgGAAWwBbQE+ATUBbQGGAX8BlQFaAfwA5QDgANUApwCoANAAzQDCANoA8AD6AOkAoQA9ACwA8v+h/1v/Xf/T/5H/Xv9y/xf/Pf+J/20ATQEKAZQAOQAFAKb/Lf/t/hz/YP+h/wMAFgD5/6//Zf/L/yIAegD3AA4B9wCkAGUAZgCTAIwAmgD1ABQBAgEMAeoAPgFtASQB+QDOABgBZAFyAW8BTgFAARYB1ACTAIUApQDwABwB5gCjAGsACgCX/2P/of8EAAEAkv9q/7n/9f/w/8f/5P/q/6f/0v9TAKsAcAAMAOf/9P91AMUA8wDSADYABwD///L/JABZAEEAzv+M/8v/ZQCuAGcAOgBRAIEAwgD0ANoAdwD8/7v/3/8pAEIAYABhAFMAIgAkAEkAXAB/AFIALgBKAE0AQAA+AHYAmgCeANMAoABrAJ0AzgCiADAA3P+7/9r/6P8fADgAKAAKANT/3P/s/9H/7P87AGUAUAAHANz/+P/0/+f/8P/m/6//gf+s/wkACAAAADkASgA1ACAABADy/7n/lP+O/7f/CQAaAA8AAwDo/8//tP/B/+v/+f/h/6n/oP/W/wEAEQAsADMAEwADACoASQAWAML/3/8gACgATQBbAGYA7f9M/5b/1f/r/yYADgD//7//fP+5/9H/u/+l/5f/oP+6/+//IQALAL3/b/9G/x//6P76/iL/Q/9f/1z/hP+O/0P/I/8T/zv/c/+d/7D/p/+k/6X/wf/t/+P/qP+P/6v/yf8WAFEARgBBAEsAUQBgAGIAiADTAP4A9wDPAK4ApQDOAOUA2QDOAHsANAAbAPX/AQAmACUA6//H/9r/2P/s/8P/uv+s/3j/s//+/zEAVwBIAEMALwAtADQARgA/ACIAQwBaADMAHgAkAPf/1P/Y//v/AADc/8P/1v/j/9D/kv+Y/5X/fP+G/3j/bf9f/1f/iP+c/2v/PP/+/gn/Fv/+/iT/SP9U/zn/+P7v/vL+1f7A/r/+u/7C/t/+Dv9H/zD/8f7s/vz+7P6//pT+kv6b/nX+ZP5W/lT+g/5s/mP+f/6R/tX+CP8W//z+2f7I/t3+Gf9D/13/df9t/3n/eP9z/0D/9v7n/vn+Bv8V/wj/EP8H//j+Af/Z/qH+gv6P/t/+Cv8H/x//Pv8//yX/G/8t/yP/HP8m/y3/bf+M/3L/Tv8b/wD/2f7k/hj/PP8s/7f+V/5r/sv+Gf/z/tL+zv7S/gz/O/9D/yr/I/8//4L/uP+3/3//OP8p/1L/ev+N/5z/qf+v/67/wP/z////AgDt/8f/yv8JADIAUwA5AA0ACAD0/yIARQBXAGQARgAsACQAPgA4ABoA/v/0//7/JwBQAGUASQARAOv/8/8bAAIA8v/O/6T/uv/J/6z/nP+X/6//uf+p/9X/DgAnABsA5v+i/4P/of/M//f//v/m/+D/DAAxAFgAVgAuABkACAANABUA+P+y/3X/cP+D/4n/nv+d/5P/e/9p/2H/Wf81/wD/7/4O/0j/b/+K/33/ZP9H/yb/CP/1/gH/Ef8O/wj/7P7p/gL/H/8s/yf/QP9t/6f/qv+W/4v/Y/89/y7/Mf9b/2T/Qv9J/1X/Yf9c/z7/N/8r/yr/Tf9Z/0T/F//0/gv/G/8L/wT/Ev8n/yr/Hf8d/yv/Tf9q/3T/g/+V/6j/sv+o/5b/h/90/3n/lv/I/7j/jP+L/7H/xf+e/2D/Nv9X/5b/u/+7/7D/kv97/17/Qv9Q/1j/UP9Y/23/h/+V/3n/SP8x/yH/Lv9T/4X/rf+u/6L/ov+x/83/5//a/7n/mP+P/5T/qv/N/9P/5f/j/9b/5P/x//P/7v/5/wIA8P/z/wYAEgAhAAEA/v8bADkARQAmAB8AHQAiADIASgBcAFIAQgApAEAAZQBiAEoARwBSAFsAaQBPADMANQAUAO7/1v/V//v/7v/1//f/8v/2/97/1f/j/9//6P/o/+P/BwAXAP7///8MAAQABQDt/+n/5P/m/wUAAAACAOj/1f/w/xgALAAyAA0A+v8JABEAQwBfAGgAbgBlAHYAdQBeADoAHAAiADIAPwA7AEoAewCbAL4A0QC9AL4AwQC7AMoAxQCfAIoAewBaADQAEwAhADkANQBEADcAEQDq/9r/AQARAPP/5v/Q/77/sP+s/7P/sP+m/6P/ov+R/4f/d/9b/1D/Rv8+/1T/ZP9w/23/bv92/3D/cv9z/5D/of+o/7z/xP/K/+L/2f+6/7H/yP8AACcAPgBJAEYAOwAbABIAFwAhAC4APAA2ACEAEwARABkAIgAtACwAEQANABoAHgAFANj/zv/M/+j//v//////DQApADIAMQATABsAJAAOAAQAEwAkACYAIQAUAAkAAAD8/wYAHAAeABsAGwAIAPv/8v8BABgAIgAVAAMAAQAWACMAKwAPAAEACgAeADoAUgBqAHcAbwBmAHkApwDHAKsAiABtAHAAfwB2AG4AXgA7AEoAXQBnAJAApQC0ALUAlwCLAJgAiwB4AIAAlgCeAI0AfwCeAMMAxwChAJAAqACsAJ8AhwCIAJsAlgCZAKoAyQDfAO0A+wAFAfUA4QDWANwA6QD6AOwAugChAK0AvgDOANcA2wDhANoA2gDmAN4AzAC3ALAArwCtALcArgCpAJ4AmACkAKUAnACHAHoAgwCaAJ4AoQCtAK0ApQCYAKAAtgC3AL0AxgDJANAAwwC3AK8ApwCwALwAzwDUAMEAsgCbAJUAiwBwAFsAYABqAFYANQAcAAcABAD2/wUALAAzAE8ATQBLAFgATABTAFwAXABYAEMASABoAIkAlQCZAKAAmQCYAK0AugC8ALUAqQCtAKIAmACoAK0ArQCiAJsAnQCXAJcAiQB2AGIAXQBuAHoAfgBxAG4AeQB8AHoAhwB0AHAAgQCKAJgAjQCFAJAAnQCVAJUAngClALMArgCwALUApwCnAKAAmQCVAIcAgwCPAKAAmwCJAHoAZgBaAFMARwBVAHsAjwCOAHoAYQBEADMAHwATABEAFAAaACcAKwAtAC4AGQACAPL/9v8KABkAKgAxADQAJwAWABkACQD1/+D/4P/n//r/+v/2//T/8f/o/+L/7P/7//z/+//0/+j/5v/l/+f/5f/u//z/+v/1/+j/5f/p//T//f/6////DAAgADcAPQAzACgAHwASABUAIgAjACkALAAzADYAJgASABAACAAAAAQAFAApACQACQDw/+7/9/8DAAYAEgAXACAAMAAcABAA+f/k/+3/CQAgACIAHgATABoAGgAPAAsADAAmAC4AJwAsAD8AMwAfABQAFwAbAAAA9f/5//3/BwADAP3/+f/0/+r/6v/w/wMACAAKAAIA+f/z/9//2//f/+D/7//y//j/9//l/9X/zf/Z/+T/6f/t/+b/1f/P/9P/1P/W/9L/zf/N/8r/yf++/7X/uv+8/77/vP/D/8v/1v/n//z/+P/g/97/6//z//P/6v/b/9z/4f/r/+b/5P/o/+T/5v/o/+L/0//C/7//xP/G/8n/xv/G/87/z//I/8b/xP/B/73/rv+q/6P/rP+6/7n/tv+m/5v/nv+Z/5H/j/+X/6X/r/+w/6f/nv+P/4f/jP+P/5H/mv+f/6L/q/+s/7T/s/+s/6L/n/+n/7T/t/+0/7f/tP+s/6z/rv+t/6n/o/+h/6D/mP+e/6X/n/+a/5X/nP+f/5b/k/+P/4j/hf9//4D/ev93/3n/g/+L/4b/hv+H/4P/gP97/4T/hf96/2//a/9r/2v/aP9q/2z/bP9k/1v/X/9h/2X/af9t/3L/cv94/3L/fP+G/4f/iv+D/4P/kP+Q/4v/i/+O/5b/mv+b/53/oP+e/5v/of+h/5z/jf+B/3z/gP+N/5f/mf+W/5P/kf+P/4r/hv+F/4P/jP+X/5//rf+v/7X/sv+x/7j/vP/H/83/zf/G/77/xP/I/8T/wP+6/7v/uf+x/6//q/+l/6H/ov+j/6X/oP+h/6j/sP+3/7T/sP+r/6n/qv+o/6j/qf+r/7D/tf+5/8b/z//Q/9r/1v/V/9f/0P/J/8n/zf/O/9T/z//Q/87/z//P/87/0f/W/93/3P/f/+X/7//z/+7/6f/s//X/9//7/wAABwACAPX/9v/+////AgAFAAgACgAGAAUAAwABAAMABAABAPf/7P/k/+T/4v/e/9z/1//T/9X/3f/g/+H/3v/Y/9T/0v/V/9T/1P/U/9j/3P/d/+L/4P/a/9f/z//Q/9D/zf/P/9X/0//T/9b/2//i/9v/1//T/9H/0v/O/8//0P/P/87/zP/M/9D/1P/X/9P/1f/X/9n/1//U/9T/0//U/9L/2v/j/+T/5//m/+v/7f/v//L/9//7//f/+f/+/////f/6//r/+/8AAAMABAABAP7//f/+//3/+//6//n/+P/5//v//P/+//7/+v/4//b/9v/2//f/9//5//r/+f/8/wEA///8//3/AAAGAAcACAAIAAcACwANABUAFwAWABQAFAAYABoAHAAeAB0AGAAVABUAFQAPAAwADgAOAAsACQAKAAsACwAJAAgACgALAAoACwALAAkACQAJAAwADQAOABAAEAARABQAFgAYABcAGQAbABsAGwAbABwAHQAcABoAGgAZABYAFgAXABYAFgAVABYAFwAWABYAFgAVABUAFQAWABUAFQAVABUAFAATABQAFQATABMAEwATABMAEgARABEAEQAPAA0ADQANAAwADAAMAAsACQAHAAUABAAGAAYABgAGAAYACAAIAAgACQAIAAkACQAKAAoACwAMAA0ADgAPAA4ADgAOAA8AEQASABMAEgASABEAEAAQABAAEQARABEAEQAQABAAEAAPAA4ADgAOAA4ADgAOAA4ADgANAA0ADQAOAA4ADQANAA0ADQAOAA4ADgAOAA4ADgAOAA4ADgAOAA0ADQANAA0ADQAMAAwADAAMAAsACwALAAoACgAJAAgACAAHAAcABgAGAAYABgAGAAYABgAFAAUABQAFAAQABAAEAAQABAAEAAMAAwADAAMAAwADAAMAAgACAAIAAgABAAEAAQABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
   var reduce = false;
   try {
     reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch (e) {}
   try {
     var sv0 = localStorage.getItem('kr-snd');
-    on = sv0 === '1' ? true : sv0 === '0' ? false : !reduce;
+    on = sv0 === '1';
   } catch (e) {
-    on = !reduce;
+    on = false;
   }
 
   /* D minor pentatonic: D4 F4 G4 A4 C5 (used by selection ticks, one note per slide index) */
@@ -5973,6 +5974,12 @@ window.KS = function () {
     mk('ui', .10);
     mk('sc', .2);
     mk('tr', 1);
+    try {
+      var bin = atob(SMP_B64), u8 = new Uint8Array(bin.length);
+      for (i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      var pr = AC.decodeAudioData(u8.buffer, function (b) { SMP = b; }, function () {});
+      if (pr && pr.catch) pr.catch(function () {});
+    } catch (e) {}
     var t = AC.currentTime + off;
     out.gain.setValueAtTime(0, t);
     out.gain.setTargetAtTime(on ? MASTER : 0, t + .02, .06);
@@ -6125,7 +6132,16 @@ window.KS = function () {
 
   /* ---------- public sounds ---------- */
   var tb = 0,
-    tt = 0;
+    tt = 0,
+    jumpUntil = 0;
+  var jy = 0, jt = 0;
+  try { jy = scrollY; jt = performance.now(); } catch (e) {}
+  addEventListener('scroll', function () {
+    var n = performance.now(), dy = Math.abs(scrollY - jy), dt = Math.max(1, n - jt);
+    jy = scrollY; jt = n;
+    if (dy > innerHeight * 1.5 || dy / dt > 10) jumpUntil = n + 1000;
+  }, { passive: true });
+  function jumping() { return performance.now() < jumpUntil; }
   var api = {
     init: init,
     state: function () {
@@ -6140,17 +6156,30 @@ window.KS = function () {
       if (AC) out.gain.setTargetAtTime(on ? MASTER : 0, T(), .05);
       if (!on && sl) release();
     },
-    slide: slide,
+    slide: function () {},
     hover: function () {},
     /* soft press: low body D3 -> A2 + a small filtered tap */
     click: function () {
       if (!ok() || !gate('ui', 90)) return;
-      var d = 1;
-      tone(B.ui, 176 * d, 132 * d, .035, .023, 'sine', 0, .003);
-      nz(B.ui, 980 * d, .55, .014, .019, 'lowpass', 0, 580, .002);
+      if (SMP) {
+        var s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+        s.buffer = SMP;
+        s.playbackRate.value = .99 + Math.random() * .02;
+        f.type = 'lowpass';
+        f.frequency.value = 3600;
+        f.Q.value = .4;
+        g.gain.value = .085;
+        s.connect(f);
+        f.connect(g);
+        g.connect(B.ui);
+        s.start(T(0));
+      } else {
+        tone(B.ui, 176, 132, .035, .016, 'sine', 0, .003);
+      }
     },
     /* selection tick: each slide index has its own pentatonic note */
     lens: function (p) {
+      return;
       if (!ok() || !gate('ui', 30)) return;
       var i = (Math.round(((p || 1) - 1) / .04) % 5 + 5) % 5,
         f = LS[i] * (.99 + Math.random() * .02);
@@ -6176,6 +6205,7 @@ window.KS = function () {
     theme: function () { api.click(); },
     /* page transitions: original character, now exclusive + ducking */
     whoosh: function () {
+      if (jumping()) return;
       if (!ok() || !gate('w', 800)) return;
       if (!testing && performance.now() - (GT.l || 0) < 1400) return;
       duck(.45, 1.1);
@@ -6185,6 +6215,7 @@ window.KS = function () {
       nz(fg, 260, .7, .8, .1, 'bandpass', 0, 2200, .3);
     },
     land: function () {
+      if (jumping()) return;
       if (!ok() || !gate('l', 1200)) return;
       if (wv) {
         wv.gain.setTargetAtTime(0, T(), .04);
@@ -6199,6 +6230,7 @@ window.KS = function () {
       api.type();
     },
     guide: function (k) {
+      return;
       if (!ok() || !gate('ui', 30)) return;
       var f = LS[(k || 0) % 5] * 2;
       tone(B.ui, f, f, .07, .03, 'sine');
@@ -6206,6 +6238,7 @@ window.KS = function () {
     },
     /* About: the same pull as the other sections, with its own gate so it plays on every entry, down or up */
     pull: function () {
+      if (jumping()) return;
       if (!ok() || !gate('pw', 450)) return;
       duck(.45, 1.1);
       var fg = AC.createGain();
@@ -6215,17 +6248,22 @@ window.KS = function () {
     },
     /* Contact: the red dot landing on the line, a soft low weight far quieter than land */
     settle: function () {
+      return;
+      if (jumping()) return;
       if (!ok() || !gate('st', 420)) return;
       tone(B.tr, 84, 52, .5, .075, 'sine', 0, .012);
       nz(B.tr, 240, .7, .22, .03, 'lowpass', 0, 130, .006);
     },
     /* About section: a dry, low, quiet press for each step of the story (same family as click, lower and softer) */
     tap: function () {
+      return;
+      if (jumping()) return;
       if (!ok() || !gate('ui', 140)) return;
       tone(B.ui, 126, 92, .06, .017, 'sine', 0, .004);
       nz(B.ui, 640, .6, .022, .013, 'lowpass', 0, 380, .003);
     },
     swell: function () {
+      return;
       if (!ok()) return;
       tone(B.tr, 73.42, 146.83, 2.4, .07, 'sine', 0, 1.1);
       nz(B.tr, 220, .6, 2.4, .05, 'bandpass', 0, 1200, 1.2);
@@ -6283,8 +6321,10 @@ window.KS = function () {
   function wire() {
     label();
     document.addEventListener('click',function(event){
-      var target=event.target.closest('button,a,label,[role="button"]');
-      if(!target || target.closest('#feedback') || target.disabled || target.id==='sound-toggle')return;
+      var el=event.target;
+      if(!el || !el.closest || el.closest('#feedback') || el.closest('#sound-toggle'))return;
+      var t=el.closest('button,a,label,[role="button"],.work-card');
+      if(!t || t.disabled)return;
       api.click();
     });
     var b = document.getElementById('sound-toggle');
