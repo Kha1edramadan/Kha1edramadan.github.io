@@ -4681,7 +4681,12 @@ __khBoot(() => {
       set(cur, false, false);
     });
     var pr = document.querySelector('.fb-prog i');
+    var _sx = box.scrollLeft, _st = performance.now();
     if (window.gsap) gsap.ticker.add(function () {
+      var _n = performance.now(), _dx = box.scrollLeft - _sx;
+      if (Math.abs(_dx) > .5 && window.KS) KS.slide(_dx / Math.max(8, _n - _st) * 1000, true);
+      _sx = box.scrollLeft;
+      _st = _n;
       var sw = box.scrollWidth,
         cw = box.clientWidth;
       if (pr && sw) {
@@ -5795,7 +5800,28 @@ addEventListener('load', function () {
         scrollTrigger: sc('#work', 'top bottom', 'top top')
       });
     })();
-    // Feedback + Contact: no section-entry SFX. Visual transitions speak for themselves.
+    /* one soft sound per section, only when the section really arrives while scrolling down by hand */
+    [['#about', 'top 50%'], ['#feedback', 'top 55%'], ['#contact', 'top 55%']].forEach(function (c) {
+      ScrollTrigger.create({
+        trigger: c[0],
+        start: c[1],
+        onEnter: function () { if (window.KS) KS.pull(); }
+      });
+    });
+    var ly = scrollY,
+      lt = performance.now(),
+      WK = document.getElementById('work'),
+      AB = document.getElementById('about');
+    addEventListener('scroll', function () {
+      var n = performance.now(),
+        dy = scrollY - ly,
+        dt = Math.max(8, n - lt);
+      ly = scrollY;
+      lt = n;
+      if (!WK || !window.KS) return;
+      var r = WK.getBoundingClientRect();
+      if (r.top < innerHeight * .9 && r.bottom > innerHeight * .1 && (!AB || AB.getBoundingClientRect().top > innerHeight * .6)) KS.slide(dy / dt * 1000);
+    }, { passive: true });
     // Start the opening word after the initial scroll layouts have finished.
     var revealIntro = function () {
       ScrollTrigger.removeEventListener('refresh', revealIntro);
@@ -5887,6 +5913,7 @@ window.KS = (function () {
   function setEnabled(yes) {
     if (!yes) {
       enabled = false;
+      stopSlide();
       if (ctx && main) {
         var now = ctx.currentTime;
         main.gain.cancelScheduledValues(now);
@@ -5907,6 +5934,7 @@ window.KS = (function () {
       var now=context.currentTime;
       main.gain.cancelScheduledValues(now);
       main.gain.setTargetAtTime(VOLUME,now,.025);
+      setTimeout(function () { if (enabled) { op = 0; openCase(); } }, 120); /* tiny confirmation that sound is on */
     }).catch(function(){enabled=false;updateButton();});
   }
 
@@ -5959,6 +5987,66 @@ window.KS = (function () {
     osc.start(time);osc.stop(time+.41);
   }
 
+  /* Work scroll / Client Voices drag: a faint airy whisper that follows the speed and stops the instant movement stops. */
+  var sl = null, slV = 0, slT = 0;
+  function stopSlide() {
+    if (!sl) return;
+    var cur = sl;
+    sl = null; slV = 0;
+    try { cur.g.gain.setTargetAtTime(0, ctx.currentTime, .035); } catch (e) {}
+    setTimeout(function () { try { cur.s.stop(); } catch (e) {} }, 300);
+  }
+  function slide(v, drag) {
+    if (!available()) return;
+    if (!drag && !manualScrollRecently()) return;
+    v = Math.abs(v);
+    if (!(v > 60)) return;
+    if (!sl) {
+      var src = ctx.createBufferSource(), hp2 = ctx.createBiquadFilter(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = noise; src.loop = true;
+      hp2.type = 'highpass'; hp2.frequency.value = 700;
+      bp.type = 'bandpass'; bp.Q.value = .6; bp.frequency.value = 1500;
+      g.gain.value = 0;
+      src.connect(hp2); hp2.connect(bp); bp.connect(g); g.connect(main);
+      src.start(0, Math.random() * 1.5);
+      sl = { s: src, g: g, f: bp };
+    }
+    slV += (Math.min(v, 3200) - slV) * .4;
+    var a = Math.pow(Math.min(slV / 2600, 1), .6), t = ctx.currentTime;
+    sl.g.gain.setTargetAtTime(Math.max(.012, a * .06), t, .05);
+    sl.f.frequency.setTargetAtTime(1300 + a * 2200, t, .07);
+    clearTimeout(slT);
+    slT = setTimeout(stopSlide, 120);
+  }
+  /* Section arrival (About / Client Voices / Contact): the same black sweep, softer and shorter, only when scrolling down by hand. */
+  function pull() {
+    if (!available() || !manualScrollRecently()) return;
+    var nowMS = performance.now();
+    if (nowMS - sw < 900) return;
+    sw = nowMS;
+    var time = ctx.currentTime;
+    var source = ctx.createBufferSource(); source.buffer = noise; source.loop = true;
+    var band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.Q.value = .72;
+    band.frequency.setValueAtTime(300, time);
+    band.frequency.exponentialRampToValueAtTime(1800, time + .42);
+    var gain = ctx.createGain(); gain.gain.setValueAtTime(.0001, time);
+    gain.gain.linearRampToValueAtTime(.045, time + .09);
+    gain.gain.exponentialRampToValueAtTime(.0001, time + .46);
+    source.connect(band); band.connect(gain); gain.connect(main);
+    source.start(time); source.stop(time + .5);
+  }
+  function closeCase() {
+    if (!available() || !clickBuffer) return;
+    var nowMS = performance.now();
+    if (nowMS - op < 170) return;
+    op = nowMS;
+    var time = ctx.currentTime;
+    var source = ctx.createBufferSource(); source.buffer = clickBuffer; source.playbackRate.value = .86;
+    var low = ctx.createBiquadFilter(); low.type = 'lowpass'; low.frequency.value = 3600;
+    var gain = ctx.createGain(); gain.gain.value = .1;
+    source.connect(low); low.connect(gain); gain.connect(main);
+    source.start(time, .074); source.stop(time + .15);
+  }
   function openCase() {
     if (!available() || !clickBuffer) return;
     var nowMS=performance.now();
@@ -5999,9 +6087,9 @@ window.KS = (function () {
     state:function(){return ctx ? ctx.state : 'not-initialized';},
     isEnabled:function(){return enabled;},
     set:setEnabled,init:silent,
-    whoosh:sweep,land:landing,open:openCase,
-    click:silent,close:silent,hover:silent,lens:silent,
-    slide:silent,pull:silent,settle:silent,tap:silent,
+    whoosh:sweep,land:landing,open:openCase,close:closeCase,pull:pull,slide:slide,
+    click:silent,hover:silent,lens:silent,
+    settle:silent,tap:silent,
     theme:silent,type:silent,resetType:silent,send:silent,recv:silent,
     confirm:silent,guide:silent,tick:silent,swell:silent
   };
