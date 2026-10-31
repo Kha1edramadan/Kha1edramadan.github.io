@@ -5712,10 +5712,9 @@ addEventListener('load', function () {
       exit(tl);
       ScrollTrigger.create({
         trigger: ab,
-        start: 'top 60%',
+        start: 'top 50%',
         end: 'bottom 40%',
-        onEnter: function () { if (window.KS) KS.pull(); },
-        onLeaveBack: function () { if (window.KS) KS.pull(); }
+        onEnter: function () { if (window.KS) KS.pull(); }
       });
       addEventListener('load', function () { ScrollTrigger.refresh(); });
       requestAnimationFrame(function () { ScrollTrigger.refresh(); });
@@ -5789,17 +5788,15 @@ addEventListener('load', function () {
     })();
     ScrollTrigger.create({
       trigger: '#feedback',
-      start: 'top 82%',
+      start: 'top 55%',
       end: 'top 15%',
-      onEnter: function () { KS.pull(); },
-      onEnterBack: function () { KS.pull(); }
+      onEnter: function () { KS.pull(); }
     });
     ScrollTrigger.create({
       trigger: '#contact',
-      start: 'top 85%',
+      start: 'top 55%',
       end: 'top 15%',
-      onEnter: function () { KS.pull(); },
-      onEnterBack: function () { KS.pull(); }
+      onEnter: function () { KS.pull(); }
     });
     var ly = scrollY,
       lt = performance.now(),
