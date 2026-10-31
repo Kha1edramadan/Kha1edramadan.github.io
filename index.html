@@ -2812,6 +2812,21 @@ html.st-intro .nav-veil,html.hero-view .nav-veil {
   background: var(--text-color);
   color: var(--bg-color);
 }
+.ht-a-q {
+  margin: .3rem 0 0;
+  padding-inline-start: .75rem;
+  border-inline-start: 2px solid var(--border-color);
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted-color);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.ht-a-q:empty { display: none; }
+.ht-answer.ar .ht-a-q { font-family: 'Cairo',var(--font-sans); }
 .ht-a-body {
   margin: 1rem 0 0;
   font-size: clamp(1.05rem,2vw,1.3rem);
@@ -2862,6 +2877,12 @@ html.st-intro .nav-veil,html.hero-view .nav-veil {
   left: 0;
   top: var(--chipY,calc(var(--cy) + 62px));
   transition: opacity .35s;
+}
+.ht-root[data-phase="answered"] .ht-in {
+  opacity: 1;
+  pointer-events: auto;
+  top: var(--inY,calc(var(--cy) + 130px));
+  transition: opacity .4s .55s;
 }
 .ht-root[data-phase="thinking"] .ask-chips,.ht-root[data-phase="reset"] .ask-chips {
   opacity: 0;
@@ -3713,6 +3734,7 @@ dialog::backdrop {
             <div class="ht-status" id="mo-status" aria-hidden="true"></div>
             <div class="ht-answer" id="mo-answer" tabindex="-1" role="group" aria-label="Answer">
               <div class="ht-a-head"><span id="mo-a-title">Answer</span><button type="button" class="ht-reset" id="mo-reset">New question</button></div>
+              <p class="ht-a-q" id="mo-q" dir="auto"></p>
               <p class="ht-a-body" id="mo-body"></p>
               <div class="ht-acts" id="mo-acts"></div>
             </div>
@@ -6374,6 +6396,8 @@ window.KS = function () {
     moBody = document.getElementById('mo-body'),
     moActs = document.getElementById('mo-acts'),
     moTitle = document.getElementById('mo-a-title'),
+    moQ = document.getElementById('mo-q'),
+    lastQ = '',
     moReset = document.getElementById('mo-reset'),
     moLive = document.getElementById('mo-live'),
     cv = document.getElementById('ht-orb');
@@ -6600,7 +6624,9 @@ window.KS = function () {
       chH = chips.children.length ? chips.offsetHeight : 0,
       y = ch + 18;
     moRoot.style.setProperty('--chipY', y + 'px');
-    moRoot.style.setProperty('--stageH', Math.max(400, y + chH + 44) + 'px');
+    var inY = y + chH + (chH ? 16 : 0);
+    moRoot.style.setProperty('--inY', inY + 'px');
+    moRoot.style.setProperty('--stageH', Math.max(400, inY + 60 + 40) + 'px');
   }
   async function think(pending, ar) {
     inp.blur();
@@ -6628,13 +6654,17 @@ window.KS = function () {
     moAns.setAttribute('aria-label', cp.answer);
     moTitle.textContent = cp.answer;
     moReset.textContent = cp.reset;
+    moQ.textContent = lastQ;
     moBody.innerHTML = wordsMo(R.html);
     moActs.innerHTML = actsInner(R.acts || {});
     moActs.style.opacity = '0';
-    inp.placeholder = R.ar ? 'الأسعار، المدة، طريقة العمل...' : 'Pricing, timeline, process...';
+    inp.placeholder = R.ar ? 'اسأل سؤالًا آخر...' : 'Ask a follow-up...';
     chipsFor(R.chips || [], R.ar);
     fit();
     setPhase('answered');
+    f.removeAttribute('inert');
+    inp.value = '';
+    sync();
     P.spd = .25;
     var ws = [].slice.call(moBody.querySelectorAll('.ht-w'));
     ws.forEach(function (w, n) {
@@ -6693,6 +6723,7 @@ window.KS = function () {
     var assistantLabel = document.querySelector('.ask > .ct-k');
     if (assistantLabel) assistantLabel.textContent = ar ? 'مساعد خالد' : 'Khaled’s Assistant';
     inp.value = q;
+    lastQ = q;
     sync();
     moving = true;
     try { KS.resetType(); KS.send(); } catch (x) {}
@@ -6709,7 +6740,10 @@ window.KS = function () {
     await sleep(reduced ? 0 : 420);
     moRoot.style.removeProperty('--stageH');
     moRoot.style.removeProperty('--chipY');
+    moRoot.style.removeProperty('--inY');
+    inp.placeholder = 'Pricing, timeline, process...';
     moBody.innerHTML = '';
+    moQ.textContent = '';
     moActs.innerHTML = '';
     moLive.textContent = '';
     inp.value = '';
@@ -6851,13 +6885,13 @@ window.KS = function () {
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     if (rec) { stopRec(); return; }
-    if (moving || phase !== 'idle') return;
+    if (moving || (phase !== 'idle' && phase !== 'answered')) return;
     var t = inp.value.trim();
     if (!t) {
       shake();
       return;
     }
-    begin(t);
+    ask(t);
   });
   chipsFor(E.initialChips('en'), false);
   sync();
